@@ -369,6 +369,84 @@ margen para corregirlo sin decisión del cliente.
   imágenes livianas. Vale la pena correr un Lighthouse real una vez
   publicado en Netlify (Fase 10).
 
+## Estado · Fase 10 · Deploy ✅
+
+- **Repositorio**: [github.com/Zeenmkt/terra-studio](https://github.com/Zeenmkt/terra-studio),
+  público, rama `main`.
+- **Netlify**: conectado directo al repo vía GitHub. `netlify.toml` ya traía
+  `build.command = "npm run build"` y `build.publish = "dist"`, así que
+  Netlify detectó la build sola, sin configurar nada a mano — 9 páginas + 1
+  función (`disponibilidad`) desplegadas desde el primer build.
+- **Bug real encontrado (no de código):** el proyecto nació con la
+  protección de equipo de Netlify activada — cualquier visitante real se
+  topaba con una pantalla de "This site is private" pidiendo iniciar sesión
+  en Netlify. Se corrigió desde el dashboard (**Project configuration → Web
+  security**), no requirió cambios en el repo.
+- **Dominio real**: `https://terrastudiosalon.netlify.app`, ya actualizado
+  en `astro.config.mjs` — resuelve el pendiente #10. Sitemap, canónicas,
+  Open Graph y el schema `HairSalon` ya salen de ese valor, confirmado en el
+  sitio publicado (no solo en el build local).
+- **Probado en el sitio publicado**, no solo en local: tildes/ñ, cero
+  errores de consola en el home y en una landing, los botones de WhatsApp
+  (los genéricos van a `wa.me/<número>` limpio, el de la calculadora arma el
+  mensaje con servicio + largo + agregados, tildes bien codificadas), botón
+  flotante visible en viewport móvil, calculadora completa de punta a punta
+  (Alisado orgánico + Melena → `$60.000`, formato correcto).
+- **Nota técnica para quien retome esto:** el conector de GitHub que usa
+  Claude Code acá (uno "Personalizado" sobre `api.githubcopilot.com`, no una
+  GitHub App tradicional) tiene acceso de lectura a este repo pero no de
+  escritura — crear el repo o pushear archivos por ese conector dio 403 las
+  dos veces que se intentó. El push inicial y el ajuste del dominio se
+  subieron con un Personal Access Token de un solo uso, pasado inline al
+  comando `git push`, nunca guardado en el repo ni en la config de git. Si
+  hace falta pushear de nuevo sin pedirle un token nuevo al cliente, hay que
+  resolver el permiso de escritura de ese conector primero.
+
+## Cómo mantener el sitio
+
+Guía rápida para los cambios más probables, sin tocar la estructura del sitio.
+
+### Editar un precio o el texto de un servicio existente
+
+Todo vive en `src/data/servicios.js` — no hay precios ni textos de servicios
+sueltos en ningún componente. Busca el servicio por su `slug` y edita
+`precios` (u `opciones`, en el caso de Cortes) para los valores en pesos, o
+`descripcion`/`idealPara`/`noEs`/`incluye` para el texto de su landing. El
+calculador, la landing y el precio "desde" de la grilla del home leen todos
+de ahí — no hay que tocar nada más. Después de editar, corre `npm run build`
+para confirmar que no quedó ningún largo/opción sin precio (el calculador no
+avisa en pantalla si falta uno; simplemente no muestra ese botón).
+
+### Agregar un servicio nuevo
+
+1. Agrega un objeto nuevo a `src/data/servicios.js`, con la misma forma que
+   los otros 6 (`slug`, `nombre`, `bajada`, `metaTitulo`, `metaDescripcion`,
+   `metodo`, y `precios` u `opciones`). El `slug` define la URL.
+2. `src/pages/[slug].astro` genera la landing sola vía `getStaticPaths()` —
+   no hace falta crear un archivo de página nuevo.
+3. Para las secciones opcionales (`restricciones`, `duracionAviso`), usa
+   como referencia otro servicio de `servicios.js` que ya las tenga.
+4. Para que el servicio nuevo pueda aparecer en Disponibilidad más adelante,
+   agrégalo también a `src/data/duraciones.js` con su duración en minutos.
+
+### Activar Disponibilidad (horas libres desde Google Calendar)
+
+Hoy está construida pero apagada (`DISPONIBILIDAD_ACTIVA = false` en
+`src/lib/disponibilidad.js`). Detalle completo del sistema en
+`TERRA_WEB_SISTEMA-DISPONIBILIDAD.md`; acá el resumen de qué falta:
+
+1. Completar `src/data/estilistas.js` con el nombre, el ID de calendario de
+   Google y los servicios de cada estilista.
+2. Completar `src/data/duraciones.js` con la duración real (en minutos) de
+   cada servicio — hoy solo Alisado orgánico la tiene.
+3. Crear una cuenta de servicio de Google Cloud, compartir el calendario de
+   cada estilista con ella (solo lectura), y agregar
+   `GOOGLE_SERVICE_ACCOUNT_EMAIL` y `GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY`
+   como variables de entorno en Netlify (**Project configuration →
+   Environment variables** — nunca en el repo).
+4. Cambiar `DISPONIBILIDAD_ACTIVA` a `true`, subir el cambio, y confirmar en
+   el sitio publicado que aparecen horas reales en al menos una landing.
+
 ## Sobre lo que llegó en `assets/`
 
 - `fotos/`: son gráficas de precios de la marca anterior (**Alisados Konny**,
@@ -401,15 +479,22 @@ margen para corregirlo sin decisión del cliente.
    de Nosotras/servicios si se agregan más adelante.
 9. La historia de Terra Studio (Nosotras) y los datos de las 6 estilistas
    (nombre, foto, especialidad)
-10. Dominio real del sitio — hoy `astro.config.mjs` usa
-    `https://terra-studio.netlify.app` como marcador. Sitemap, robots.txt,
-    canónicas y Open Graph salen todos de esa variable, así que en la Fase
-    10 se actualiza en un solo lugar.
+10. ~~Dominio real del sitio~~ — resuelto en la Fase 10:
+    `https://terrastudiosalon.netlify.app`. Si más adelante compran un
+    dominio propio, actualizar `astro.config.mjs` (ver "Cómo mantener el
+    sitio" más abajo si hace falta el detalle de qué más depende de ese
+    valor).
 11. Para activar Disponibilidad: el mapa de estilistas
     (`src/data/estilistas.js`), la duración interna de cada tratamiento
     (`src/data/duraciones.js`, solo Alisado tiene una hoy), y las
-    credenciales de la cuenta de servicio de Google en Netlify.
+    credenciales de la cuenta de servicio de Google en Netlify — paso a
+    paso en "Cómo mantener el sitio" más arriba.
 
-## Fases siguientes
+## Fases
 
-Deploy (Fase 10 — la última).
+Las 10 fases del prompt maestro están completas — Fundaciones, Layout,
+Home, Calculador, Landings, Nosotras/Contacto, SEO, Disponibilidad (armada,
+apagada a la espera de datos de Konny), Calidad y Deploy. El sitio está
+publicado en `https://terrastudiosalon.netlify.app`. Lo que sigue de acá en
+adelante es contenido real (fotos, reseñas, datos de estilistas — ver
+Pendientes) y, cuando llegue, activar Disponibilidad.
