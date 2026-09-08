@@ -2,10 +2,9 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
-// ⬜ Pendiente: reemplazar por el dominio real en la Fase 10 (Deploy) — el de
-// Netlify si no hay dominio propio, o terrastudio.cl si lo compran. Sitemap,
-// canónicas y Open Graph se generan a partir de este valor.
-const SITIO = 'https://terra-studio.netlify.app';
+// Sitio en producción (Netlify). Si más adelante compran un dominio propio,
+// actualizar acá — de este valor salen el sitemap, las canónicas y Open Graph.
+const SITIO = 'https://terrastudiosalon.netlify.app';
 
 // https://astro.build/config
 export default defineConfig({
