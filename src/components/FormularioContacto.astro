@@ -1,0 +1,145 @@
+---
+// ⬜ Pendiente: reemplazar el endpoint por el formulario real de Formspree
+// (Konny crea una cuenta en formspree.io, un formulario nuevo, y pega el ID
+// que le dan en vez de "TU_ID_DE_FORMSPREE"). Mientras tanto el formulario
+// avisa que no está conectado en vez de fallar en silencio.
+import { terra } from "../data/negocio";
+import { urlWhatsApp } from "../lib/whatsapp";
+import Boton from "./Boton.astro";
+
+const whatsappUrl = urlWhatsApp(terra.whatsapp);
+---
+
+<div class="formulario-envoltura">
+  <form id="formulario-contacto" class="formulario" data-endpoint="https://formspree.io/f/xaeypkgz">
+    <div class="formulario__campo">
+      <label for="nombre">Nombre</label>
+      <input type="text" id="nombre" name="nombre" autocomplete="name" required />
+    </div>
+
+    <div class="formulario__campo">
+      <label for="correo">Correo</label>
+      <input type="email" id="correo" name="_replyto" autocomplete="email" required />
+    </div>
+
+    <div class="formulario__campo">
+      <label for="mensaje">Mensaje</label>
+      <textarea id="mensaje" name="mensaje" rows="4" required></textarea>
+    </div>
+
+    <Boton variante="primario" type="submit">Enviar mensaje</Boton>
+
+    <p class="texto-sm formulario__alternativa">
+      ¿Prefieres no esperar? <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">Escríbenos por WhatsApp</a>.
+    </p>
+  </form>
+
+  <!-- Hermano del form, no hijo: si el form se oculta al enviar, este mensaje
+       tiene que seguir viéndose. -->
+  <p class="formulario__estado texto-sm" role="status" aria-live="polite" hidden></p>
+</div>
+
+<style>
+  .formulario {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    max-width: 480px;
+    margin-inline: auto;
+  }
+
+  .formulario[hidden] {
+    display: none;
+  }
+
+  .formulario__campo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .formulario__campo label {
+    font-size: var(--text-sm);
+    font-weight: 600;
+  }
+
+  .formulario__campo input,
+  .formulario__campo textarea {
+    font-family: var(--fuente-cuerpo);
+    font-size: var(--text-p);
+    padding: var(--space-2);
+    border: 1px solid var(--color-marron);
+    border-radius: 8px;
+    background: var(--bg-base);
+    color: var(--fg-base);
+  }
+
+  .formulario__campo input:focus-visible,
+  .formulario__campo textarea:focus-visible {
+    outline: 2px solid var(--color-terracota);
+    outline-offset: 2px;
+  }
+
+  .formulario__estado {
+    padding: var(--space-2) var(--space-3);
+    border-radius: 8px;
+    background: var(--bg-oscuro);
+    color: var(--fg-oscuro);
+  }
+
+  .formulario__alternativa {
+    /* hereda el color de la Seccion que lo use — sin fijar uno, para que
+       FormularioContacto sirva sobre cualquier fondo del sistema */
+    text-align: center;
+  }
+</style>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>("#formulario-contacto");
+
+  if (form) {
+    const estado = form.parentElement!.querySelector<HTMLElement>(".formulario__estado")!;
+    const boton = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    const endpoint = form.dataset.endpoint!;
+    const noConfigurado = endpoint.includes("TU_ID_DE_FORMSPREE");
+
+    function mostrarEstado(texto: string) {
+      estado.textContent = texto;
+      estado.hidden = false;
+    }
+
+    form.addEventListener("submit", async (evento) => {
+      evento.preventDefault();
+
+      if (noConfigurado) {
+        mostrarEstado(
+          "Este formulario todavía no está conectado a Formspree. Mientras tanto, escríbenos por WhatsApp."
+        );
+        return;
+      }
+
+      boton.disabled = true;
+      boton.textContent = "Enviando...";
+      estado.hidden = true;
+
+      try {
+        const respuesta = await fetch(endpoint, {
+          method: "POST",
+          body: new FormData(form),
+          headers: { Accept: "application/json" },
+        });
+
+        if (!respuesta.ok) throw new Error("Formspree respondió con error");
+
+        form.hidden = true;
+        mostrarEstado("Listo, recibimos tu mensaje. Te escribimos apenas lo veamos.");
+      } catch {
+        boton.disabled = false;
+        boton.textContent = "Enviar mensaje";
+        mostrarEstado(
+          "No pudimos enviar tu mensaje. Intenta de nuevo o escríbenos directo por WhatsApp."
+        );
+      }
+    });
+  }
+</script>

@@ -1,0 +1,89 @@
+---
+import { servicios } from "../../data/servicios";
+import { formatearCLP } from "../../lib/formato";
+import Seccion from "../Seccion.astro";
+import Arco from "../Arco.astro";
+
+function precioDesde(servicio) {
+  return servicio.precios
+    ? servicio.precios.melena
+    : Math.min(...servicio.opciones.map((o) => o.precio));
+}
+---
+
+<Seccion id="servicios" fondo="base">
+  <h2 class="servicios__titulo">Servicios</h2>
+  <ul class="servicios__grid">
+    {
+      servicios.map((servicio) => (
+        <li data-reveal-item>
+          <a href={`/${servicio.slug}`} class="tarjeta-servicio">
+            <Arco ratio="4 / 3" fondo="superficie" class="tarjeta-servicio__arco" />
+            <h3>{servicio.nombre}</h3>
+            <p class="texto-sm">{servicio.bajada}</p>
+            <p class="tarjeta-servicio__precio">Desde {formatearCLP(precioDesde(servicio))}</p>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</Seccion>
+
+<style>
+  .servicios__titulo {
+    text-align: center;
+    margin-block-end: var(--space-6);
+  }
+
+  .servicios__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .tarjeta-servicio {
+    display: block;
+    transition: transform var(--dur-hover) var(--ease);
+  }
+
+  .tarjeta-servicio:hover {
+    transform: scale(1.02);
+  }
+
+  .tarjeta-servicio h3 {
+    margin-block-start: var(--space-2);
+  }
+
+  .tarjeta-servicio .texto-sm {
+    margin-block-start: var(--space-1);
+    color: var(--color-marron);
+  }
+
+  .tarjeta-servicio__precio {
+    margin-block-start: var(--space-2);
+    font-weight: 600;
+    color: var(--fg-titulo);
+  }
+
+  /* :global — .tarjeta-servicio__arco vive en el <div> que renderiza Arco.astro.
+     Ganamos especificidad a su regla .arco--superficie sumando el :hover del
+     padre (mismo patrón que en Header, ver la nota ahí). */
+  :global(.tarjeta-servicio:hover .tarjeta-servicio__arco) {
+    background-color: var(--bg-impacto);
+  }
+
+  @media (min-width: 640px) {
+    .servicios__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .servicios__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>

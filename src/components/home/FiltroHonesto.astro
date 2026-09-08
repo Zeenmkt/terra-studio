@@ -1,0 +1,24 @@
+---
+import Seccion from "../Seccion.astro";
+---
+
+<Seccion fondo="base" espacio="amplio">
+  <p class="filtro__texto">
+    Ven porque quieres un cabello saludable. Si buscas un liso tabla por
+    encima de lo que tu cabello permite, este no es el lugar.
+  </p>
+</Seccion>
+
+<style>
+  .filtro__texto {
+    max-width: 22ch;
+    margin-inline: auto;
+    text-align: center;
+    font-family: var(--fuente-titulo);
+    font-weight: 100;
+    letter-spacing: var(--tracking-titulo);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    line-height: 1.2;
+    color: var(--fg-titulo);
+  }
+</style>

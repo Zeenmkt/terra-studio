@@ -1,0 +1,65 @@
+---
+// Solo en móvil: en desktop el botón "Agendar por WhatsApp" del encabezado
+// ya está siempre visible, no hace falta uno flotante encima.
+import { terra } from "../data/negocio";
+import { urlWhatsApp } from "../lib/whatsapp";
+
+const whatsappUrl = urlWhatsApp(terra.whatsapp);
+---
+
+<a
+  href={whatsappUrl}
+  target="_blank"
+  rel="noopener noreferrer"
+  class="whatsapp-flotante"
+  aria-label="Agendar por WhatsApp"
+>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.75"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M4 12a8 8 0 1 1 3.2 6.4L4 20l1.1-3.4A7.96 7.96 0 0 1 4 12Z"></path>
+    <circle cx="8.5" cy="12" r="0.75" fill="currentColor" stroke="none"></circle>
+    <circle cx="12" cy="12" r="0.75" fill="currentColor" stroke="none"></circle>
+    <circle cx="15.5" cy="12" r="0.75" fill="currentColor" stroke="none"></circle>
+  </svg>
+</a>
+
+<style>
+  .whatsapp-flotante {
+    display: none;
+  }
+
+  @media (max-width: 767px) {
+    .whatsapp-flotante {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: fixed;
+      bottom: var(--space-3);
+      right: var(--space-3);
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--bg-impacto);
+      color: var(--fg-impacto);
+      box-shadow: 0 4px 16px color-mix(in srgb, var(--color-marron) 25%, transparent);
+      z-index: 30;
+      transition: transform var(--dur-hover) var(--ease);
+    }
+
+    .whatsapp-flotante:hover {
+      transform: scale(1.05);
+    }
+
+    .whatsapp-flotante svg {
+      width: 26px;
+      height: 26px;
+    }
+  }
+</style>

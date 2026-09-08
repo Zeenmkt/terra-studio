@@ -1,0 +1,78 @@
+---
+import { terra } from "../data/negocio";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Seccion from "../components/Seccion.astro";
+import Arco from "../components/Arco.astro";
+---
+
+<BaseLayout
+  title="Nosotras — Terra Studio"
+  description="Quiénes somos en Terra Studio: nuestra filosofía de diagnóstico antes de cada tratamiento, y el equipo detrás."
+>
+  <Seccion fondo="base">
+    <h1 class="nosotras__titulo">Nosotras</h1>
+  </Seccion>
+
+  <Seccion fondo="impacto">
+    <h2>Nuestra filosofía</h2>
+    <p class="prosa">
+      Somos un estudio integral especializado en alisados, terapias y
+      tratamientos capilares. Nuestra misión es entregar salud y bienestar
+      capilar: buscamos lisos saludables, respetando siempre tu cabello.
+    </p>
+    <p class="prosa">
+      Creamos técnicas propias, personalizadas para cada clienta — por eso
+      todos nuestros tratamientos empiezan con un diagnóstico capilar:
+      evaluamos el estado de tu cabello y tu cuero cabelludo antes de decidir
+      qué tratamiento te conviene.
+    </p>
+    <p class="texto-sm">
+      <a href="/#metodo">Ver el método paso a paso →</a>
+    </p>
+  </Seccion>
+
+  <Seccion fondo="base">
+    <h2 class="nosotras__titulo">Nuestra historia</h2>
+    <p class="prosa nosotras__centrado">⬜ Pendiente: la historia de Terra Studio.</p>
+  </Seccion>
+
+  <Seccion fondo="oscuro">
+    <h2 class="nosotras__titulo">El equipo</h2>
+    <p class="prosa nosotras__centrado">
+      Somos {terra.estilistas} estilistas especializadas, cada una con su
+      propia especialidad.
+    </p>
+    <ul class="nosotras__equipo">
+      {
+        new Array(terra.estilistas).fill(null).map(() => (
+          <li>
+            <Arco ratio="1 / 1" fondo="base" />
+          </li>
+        ))
+      }
+    </ul>
+    <p class="texto-sm nosotras__centrado">⬜ Pendiente: nombre, foto y especialidad de cada una.</p>
+  </Seccion>
+</BaseLayout>
+
+<style>
+  .nosotras__titulo,
+  .nosotras__centrado {
+    text-align: center;
+  }
+
+  .nosotras__equipo {
+    list-style: none;
+    margin: var(--space-4) 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
+  }
+
+  @media (min-width: 640px) {
+    .nosotras__equipo {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>

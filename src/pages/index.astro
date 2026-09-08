@@ -1,0 +1,47 @@
+---
+import { terra } from "../data/negocio";
+import { servicios } from "../data/servicios";
+import { schemaHairSalon } from "../lib/schema";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Hero from "../components/home/Hero.astro";
+import Metodo from "../components/home/Metodo.astro";
+import ServiciosGrid from "../components/home/ServiciosGrid.astro";
+import FiltroHonesto from "../components/home/FiltroHonesto.astro";
+import Calculador from "../components/Calculador.astro";
+import Seccion from "../components/Seccion.astro";
+import Confianza from "../components/home/Confianza.astro";
+import AntesDespues from "../components/home/AntesDespues.astro";
+import Resenas from "../components/home/Resenas.astro";
+import UbicacionHorario from "../components/UbicacionHorario.astro";
+
+const schema = schemaHairSalon(terra, servicios, Astro.site);
+---
+
+<BaseLayout
+  title="Peluquería y estudio capilar en Temuco | Terra Studio"
+  description="Alisado orgánico, botox capilar, reconstrucción SOS y más — con diagnóstico incluido antes de cada tratamiento. Calcula tu valor referencial y agenda por WhatsApp."
+>
+  <Fragment slot="schema">
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  </Fragment>
+  <Hero />
+  <Metodo />
+  <ServiciosGrid />
+  <FiltroHonesto />
+  {/* fondo="base": Calculador da por hecho ese fondo, ver la nota en Calculador.astro */}
+  <Seccion id="calculador" fondo="base">
+    <h2 class="calculador-titulo">Calcula tu valor referencial</h2>
+    <Calculador />
+  </Seccion>
+  <Confianza />
+  <AntesDespues />
+  <Resenas />
+  <UbicacionHorario />
+</BaseLayout>
+
+<style>
+  .calculador-titulo {
+    text-align: center;
+    margin-block-end: var(--space-4);
+  }
+</style>

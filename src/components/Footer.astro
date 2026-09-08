@@ -1,0 +1,125 @@
+---
+import { terra } from "../data/negocio";
+import { servicios } from "../data/servicios";
+import { urlWhatsApp } from "../lib/whatsapp";
+import Seccion from "./Seccion.astro";
+
+const dias: [string, string | null][] = [
+  ["Lunes", terra.horario.lunes],
+  ["Martes", terra.horario.martes],
+  ["Miércoles", terra.horario.miercoles],
+  ["Jueves", terra.horario.jueves],
+  ["Viernes", terra.horario.viernes],
+  ["Sábado", terra.horario.sabado],
+  ["Domingo", terra.horario.domingo],
+];
+
+const whatsappUrl = urlWhatsApp(terra.whatsapp);
+const instagramUrl = `https://instagram.com/${terra.instagram.replace("@", "")}`;
+---
+
+<Seccion as="footer" fondo="oscuro">
+  <div class="pie__grid">
+    <div class="pie__marca">
+      <img
+        src="/logos/terra-horizontal-crema.png"
+        alt="Terra Studio"
+        width="180"
+        height="45"
+        loading="lazy"
+      />
+      <p class="texto-sm">{terra.bajada}</p>
+    </div>
+
+    <nav class="pie__columna" aria-label="Servicios">
+      <h3>Servicios</h3>
+      <ul>
+        {
+          servicios.map((servicio) => (
+            <li>
+              <a href={`/${servicio.slug}`}>{servicio.nombre}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="pie__columna">
+      <h3>Visítanos</h3>
+      <p class="texto-sm">
+        {terra.direccion.calle}, {terra.direccion.detalle}<br />
+        {terra.direccion.referencia}
+      </p>
+      <p class="texto-sm">
+        <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">Agendar por WhatsApp</a>
+      </p>
+      <p class="texto-sm">
+        <a href={instagramUrl} target="_blank" rel="noopener noreferrer">{terra.instagram}</a>
+      </p>
+    </div>
+
+    <div class="pie__columna">
+      <h3>Horario</h3>
+      <ul class="pie__horario texto-sm">
+        {
+          dias.map(([dia, horas]) => (
+            <li>
+              <span>{dia}</span>
+              <span>{horas ?? "Cerrado"}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</Seccion>
+
+<style>
+  .pie__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4);
+  }
+
+  .pie__marca img {
+    height: 36px;
+    width: auto;
+    margin-block-end: var(--space-2);
+  }
+
+  h3 {
+    font-family: var(--fuente-cuerpo);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: inherit;
+    margin-block-end: var(--space-2);
+  }
+
+  .pie__columna ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .pie__columna p + p {
+    margin-block-start: var(--space-1);
+  }
+
+  .pie__horario li {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-2);
+    max-width: 220px;
+  }
+
+  @media (min-width: 768px) {
+    .pie__grid {
+      grid-template-columns: minmax(0, 1.5fr) repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>

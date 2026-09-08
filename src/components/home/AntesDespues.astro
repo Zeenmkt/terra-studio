@@ -1,0 +1,55 @@
+---
+import Seccion from "../Seccion.astro";
+import Arco from "../Arco.astro";
+
+// ⬜ Pendiente: fotos reales de antes/después, autorizadas por cada clienta.
+// Estos arcos son marcadores de espacio, no fotos — cuando lleguen, cada uno
+// recibe una <img> igual que en ServiciosGrid.astro.
+const marcadores = new Array(4).fill(null);
+---
+
+<Seccion fondo="base">
+  <h2 class="antes-despues__titulo">Antes y después</h2>
+  <ul class="antes-despues__grid">
+    {
+      marcadores.map((_, i) => (
+        <li data-reveal-item>
+          <Arco
+            ratio="3 / 4"
+            fondo={i % 2 === 0 ? "superficie" : "impacto"}
+            class="antes-despues__arco"
+          />
+        </li>
+      ))
+    }
+  </ul>
+  <p class="texto-sm antes-despues__marcador">⬜ Fotos reales autorizadas, pendientes</p>
+</Seccion>
+
+<style>
+  .antes-despues__titulo {
+    text-align: center;
+    margin-block-end: var(--space-6);
+  }
+
+  .antes-despues__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
+  }
+
+  .antes-despues__marcador {
+    text-align: center;
+    margin-block-start: var(--space-4);
+    color: var(--color-marron);
+  }
+
+  @media (min-width: 768px) {
+    .antes-despues__grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+</style>

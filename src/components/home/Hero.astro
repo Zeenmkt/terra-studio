@@ -1,0 +1,130 @@
+---
+import { terra } from "../../data/negocio";
+import { urlWhatsApp } from "../../lib/whatsapp";
+import Boton from "../Boton.astro";
+
+const whatsappUrl = urlWhatsApp(terra.whatsapp);
+---
+
+<section class="hero">
+  <!--
+    PLACEHOLDER: acá va la foto real del salón a pantalla completa, con velo
+    terracota al 40% encima (ver sección 7.1 del prompt maestro). Mientras no
+    llega, el fondo es un degradado dentro de la misma paleta — nada de foto
+    inventada.
+  -->
+  <div class="hero__fondo" aria-hidden="true"></div>
+
+  <div class="hero__contenido contenedor">
+    <img
+      src="/logos/terra-vertical-crema.png"
+      alt="Terra Studio"
+      width="180"
+      height="216"
+      class="hero__logo"
+    />
+    <h1 class="hero__claim">{terra.claim}</h1>
+    <Boton variante="primario" href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+      Agendar por WhatsApp
+    </Boton>
+  </div>
+
+  <a href="#metodo" class="hero__scroll" aria-label="Bajar a conocer el método">
+    <span></span>
+  </a>
+
+  <p class="hero__marcador texto-sm">⬜ Foto del local pendiente</p>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .hero__fondo {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(
+        120% 90% at 50% 0%,
+        color-mix(in srgb, var(--color-terracota) 55%, transparent),
+        transparent 60%
+      ),
+      var(--color-marron);
+  }
+
+  .hero__contenido {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+    text-align: center;
+    padding-block: var(--space-8);
+  }
+
+  .hero__logo {
+    width: 140px;
+    height: auto;
+  }
+
+  .hero__claim {
+    font-family: var(--fuente-titulo);
+    font-weight: 100;
+    letter-spacing: var(--tracking-titulo);
+    color: var(--fg-oscuro);
+    font-size: var(--text-h3);
+    line-height: var(--leading-h3);
+    max-width: 26ch;
+  }
+
+  .hero__scroll {
+    position: absolute;
+    bottom: var(--space-4);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 40px;
+    border: 1.5px solid var(--color-crema);
+    border-radius: 999px;
+  }
+
+  .hero__scroll span {
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    width: 4px;
+    height: 8px;
+    margin-left: -2px;
+    border-radius: 999px;
+    background: var(--color-crema);
+    animation: hero-scroll 2s var(--ease) infinite;
+  }
+
+  @keyframes hero-scroll {
+    0% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    75% {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+  }
+
+  .hero__marcador {
+    position: absolute;
+    bottom: var(--space-2);
+    right: var(--space-2);
+    color: color-mix(in srgb, var(--color-crema) 70%, transparent);
+  }
+</style>

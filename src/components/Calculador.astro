@@ -1,0 +1,415 @@
+---
+// Usar siempre dentro de <Seccion fondo="base">. El texto de los botones sin
+// seleccionar es marrón fijo (no hereda el color de la sección) — sobre
+// cualquier otro fondo del sistema no pasa contraste (verificado en la Fase
+// 9: marrón sobre terracota da ~1.1:1, casi invisible).
+import { servicios, agregados, largos } from "../data/servicios";
+import { formatearCLP } from "../lib/formato";
+import Boton from "./Boton.astro";
+
+interface Props {
+  servicioInicial?: string; // slug del servicio, para precargarlo en una landing
+}
+
+const { servicioInicial } = Astro.props;
+const cortes = servicios.find((s) => s.slug === "cortes");
+---
+
+<div class="calculador" id="calculador" data-servicio-inicial={servicioInicial ?? ""}>
+  <div data-paso="servicio">
+    <h3 class="calculador__pregunta">¿Qué te quieres hacer?</h3>
+    <div class="calculador__opciones" data-grupo="servicio" role="group" aria-label="Servicio">
+      {
+        servicios.map((s) => (
+          <button type="button" class="calculador__opcion" data-valor={s.slug} aria-pressed="false">
+            {s.nombre}
+          </button>
+        ))
+      }
+    </div>
+  </div>
+
+  <div data-paso="variante" hidden>
+    <h3 class="calculador__pregunta" data-texto="variante">¿Cuál es tu largo?</h3>
+    <div class="calculador__opciones" data-grupo="largo" role="group" aria-label="Largo">
+      {
+        largos.map((l) => (
+          <button type="button" class="calculador__opcion" data-valor={l} aria-pressed="false">
+            {l}
+          </button>
+        ))
+      }
+    </div>
+    <div class="calculador__opciones" data-grupo="opcion" role="group" aria-label="Tipo de corte" hidden>
+      {
+        cortes?.opciones.map((o) => (
+          <button type="button" class="calculador__opcion" data-valor={o.nombre} aria-pressed="false">
+            {o.nombre}
+          </button>
+        ))
+      }
+    </div>
+  </div>
+
+  <div data-paso="historial">
+    <h3 class="calculador__pregunta">¿Te has hecho algo antes?</h3>
+    <div class="calculador__opciones" data-grupo="historial" role="group" aria-label="Historial capilar">
+      <button type="button" class="calculador__opcion" data-valor="decoloracion" aria-pressed="false">
+        Decoloración
+      </button>
+      <button type="button" class="calculador__opcion" data-valor="tintura" aria-pressed="false">
+        Tintura
+      </button>
+      <button type="button" class="calculador__opcion" data-valor="alisado" aria-pressed="false">
+        Alisado
+      </button>
+      <button type="button" class="calculador__opcion" data-valor="nada" aria-pressed="false">
+        Nada de eso
+      </button>
+    </div>
+  </div>
+
+  <div class="calculador__advertencias" hidden></div>
+
+  <div class="calculador__resultado" hidden>
+    <p class="calculador__resumen texto-sm"></p>
+    <p class="calculador__precio"></p>
+    <p class="texto-sm calculador__etiqueta">valor referencial</p>
+    <p class="texto-sm calculador__incluye" hidden></p>
+    <p class="texto-sm">
+      El valor final lo confirmamos en el salón: también depende de la cantidad de cabello y
+      de tu estructura capilar.
+    </p>
+    <p class="texto-sm calculador__duracion" hidden></p>
+
+    <div class="calculador__agregados" hidden>
+      <p class="texto-sm calculador__agregados-titulo">Puedes agregar a tu servicio</p>
+      <div class="calculador__opciones" data-grupo="agregados" role="group" aria-label="Agregados">
+        {
+          agregados.map((a) => (
+            <button
+              type="button"
+              class="calculador__opcion"
+              data-valor={a.nombre}
+              data-precio={a.precio}
+              aria-pressed="false"
+            >
+              {a.nombre} <span>+{formatearCLP(a.precio)}</span>
+            </button>
+          ))
+        }
+      </div>
+    </div>
+
+    <Boton variante="primario" href="#" class="calculador__whatsapp" target="_blank" rel="noopener noreferrer">
+      Agendar por WhatsApp
+    </Boton>
+  </div>
+
+  <p class="texto-sm calculador__pie">Todo valor es aproximado. El valor final se ve en el salón.</p>
+</div>
+
+<style>
+  .calculador {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    max-width: 640px;
+    margin-inline: auto;
+  }
+
+  .calculador__pregunta {
+    margin-block-end: var(--space-2);
+  }
+
+  .calculador__opciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .calculador__opcion {
+    /* padding vertical pensado para un blanco táctil cómodo (~44px de alto) */
+    padding: 0.75rem var(--space-2);
+    border: 1px solid var(--color-marron);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--color-marron);
+    font-family: var(--fuente-cuerpo);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: background var(--dur-hover) var(--ease), color var(--dur-hover) var(--ease);
+  }
+
+  .calculador__opcion[aria-pressed="true"] {
+    background: var(--bg-impacto);
+    border-color: var(--color-terracota);
+    color: var(--fg-impacto);
+  }
+
+  .calculador__advertencias {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  /* [hidden] con la misma especificidad que .calculador__opciones/.calculador__advertencias
+     pierde contra ellas porque son reglas de autor (nunca gana el user-agent
+     en un empate) — hay que ganarles explícitamente con el atributo. */
+  .calculador__opciones[hidden],
+  .calculador__advertencias[hidden] {
+    display: none;
+  }
+
+  .calculador__advertencia {
+    padding: var(--space-2) var(--space-3);
+    border-radius: 12px;
+    background: var(--bg-oscuro);
+    color: var(--fg-oscuro);
+  }
+
+  .calculador__advertencia strong {
+    display: block;
+    margin-block-end: 0.25em;
+  }
+
+  .calculador__resultado {
+    padding: var(--space-4);
+    border-radius: 16px;
+    background: var(--bg-base);
+    color: var(--fg-base);
+    text-align: center;
+  }
+
+  .calculador__resumen {
+    color: var(--color-marron);
+  }
+
+  .calculador__precio {
+    font-family: var(--fuente-titulo);
+    font-weight: 100;
+    font-size: var(--text-h2);
+    color: var(--fg-titulo);
+    margin-block: var(--space-1);
+  }
+
+  .calculador__etiqueta {
+    margin-block-end: var(--space-3);
+  }
+
+  .calculador__incluye {
+    margin-block-end: var(--space-2);
+  }
+
+  .calculador__duracion {
+    margin-block-start: var(--space-2);
+    font-weight: 600;
+  }
+
+  .calculador__agregados {
+    margin-block: var(--space-4);
+    text-align: left;
+  }
+
+  .calculador__agregados-titulo {
+    margin-block-end: var(--space-2);
+    font-weight: 600;
+  }
+
+  .calculador__pie {
+    text-align: center;
+    color: var(--color-marron);
+  }
+</style>
+
+<script>
+  import { servicios, agregados } from "../data/servicios";
+  import { terra } from "../data/negocio";
+  import { formatearCLP } from "../lib/formato";
+  import { urlWhatsApp } from "../lib/whatsapp";
+  import { calcularPrecio, obtenerAdvertencias, armarMensajeCalculadora } from "../lib/calculador";
+
+  for (const raiz of document.querySelectorAll<HTMLElement>(".calculador")) {
+    const servicioInicial = raiz.dataset.servicioInicial || null;
+
+    const estado = {
+      servicio: servicios.find((s) => s.slug === servicioInicial) ?? null,
+      largo: null as string | null,
+      opcion: null as string | null,
+      historial: [] as string[],
+      agregados: [] as string[],
+    };
+
+    const pasoServicio = raiz.querySelector<HTMLElement>('[data-paso="servicio"]')!;
+    const pasoVariante = raiz.querySelector<HTMLElement>('[data-paso="variante"]')!;
+    const preguntaVariante = raiz.querySelector<HTMLElement>('[data-texto="variante"]')!;
+    const grupoLargo = raiz.querySelector<HTMLElement>('[data-grupo="largo"]')!;
+    const grupoOpcion = raiz.querySelector<HTMLElement>('[data-grupo="opcion"]')!;
+    const advertencias = raiz.querySelector<HTMLElement>(".calculador__advertencias")!;
+    const resultado = raiz.querySelector<HTMLElement>(".calculador__resultado")!;
+    const resumen = raiz.querySelector<HTMLElement>(".calculador__resumen")!;
+    const precioEl = raiz.querySelector<HTMLElement>(".calculador__precio")!;
+    const incluyeEl = raiz.querySelector<HTMLElement>(".calculador__incluye")!;
+    const duracionEl = raiz.querySelector<HTMLElement>(".calculador__duracion")!;
+    const agregadosWrap = raiz.querySelector<HTMLElement>(".calculador__agregados")!;
+    const whatsappBtn = raiz.querySelector<HTMLAnchorElement>(".calculador__whatsapp")!;
+
+    if (servicioInicial) {
+      pasoServicio.hidden = true;
+    }
+
+    function marcarUnico(grupo: HTMLElement, valorActivo: string | null) {
+      for (const btn of grupo.querySelectorAll<HTMLButtonElement>(".calculador__opcion")) {
+        btn.setAttribute("aria-pressed", String(btn.dataset.valor === valorActivo));
+      }
+    }
+
+    function marcarMultiple(grupo: HTMLElement, valoresActivos: string[]) {
+      for (const btn of grupo.querySelectorAll<HTMLButtonElement>(".calculador__opcion")) {
+        btn.setAttribute("aria-pressed", String(valoresActivos.includes(btn.dataset.valor!)));
+      }
+    }
+
+    function render() {
+      // Variante: largo u opciones, según el servicio elegido
+      if (estado.servicio) {
+        pasoVariante.hidden = false;
+        const esLargo = estado.servicio.variaPorLargo;
+        grupoLargo.hidden = !esLargo;
+        grupoOpcion.hidden = esLargo;
+        preguntaVariante.textContent = esLargo ? "¿Cuál es tu largo?" : "¿Qué tipo de corte quieres?";
+      } else {
+        pasoVariante.hidden = true;
+      }
+
+      marcarUnico(raiz.querySelector('[data-grupo="servicio"]')!, estado.servicio?.slug ?? null);
+      marcarUnico(grupoLargo, estado.largo);
+      marcarUnico(grupoOpcion, estado.opcion);
+      marcarMultiple(raiz.querySelector('[data-grupo="historial"]')!, estado.historial);
+      marcarMultiple(raiz.querySelector('[data-grupo="agregados"]')!, estado.agregados);
+
+      // Advertencias automáticas
+      advertencias.innerHTML = "";
+      const activas = estado.servicio ? obtenerAdvertencias(estado.servicio, estado.historial) : [];
+      if (activas.length > 0) {
+        advertencias.hidden = false;
+        for (const a of activas) {
+          const div = document.createElement("div");
+          div.className = "calculador__advertencia";
+          div.innerHTML = `<strong>⚠️ ${a.titulo}</strong>${a.texto}`;
+          advertencias.appendChild(div);
+        }
+      } else {
+        advertencias.hidden = true;
+      }
+
+      // Resultado
+      const varianteLista = estado.servicio?.variaPorLargo ? estado.largo : estado.opcion;
+      if (estado.servicio && varianteLista) {
+        resultado.hidden = false;
+
+        const agregadosElegidos = agregados.filter((a) => estado.agregados.includes(a.nombre));
+        const precio = calcularPrecio(estado.servicio, {
+          largo: estado.largo ?? undefined,
+          opcion: estado.opcion ?? undefined,
+          agregadosSeleccionados: agregadosElegidos,
+        });
+
+        resumen.textContent = `${estado.servicio.nombre} · ${varianteLista}`;
+        precioEl.textContent = formatearCLP(precio);
+
+        if (estado.servicio.incluye) {
+          incluyeEl.hidden = false;
+          const items = estado.servicio.incluye.map((i) => i.split(":")[0]).join(", ").toLowerCase();
+          incluyeEl.textContent = `Incluye ${items}.`;
+        } else {
+          incluyeEl.hidden = true;
+        }
+
+        if (estado.servicio.duracionAviso) {
+          duracionEl.hidden = false;
+          duracionEl.textContent = `⏱ ${estado.servicio.duracionAviso}`;
+        } else {
+          duracionEl.hidden = true;
+        }
+
+        agregadosWrap.hidden = !estado.servicio.variaPorLargo;
+
+        const horaBoton = raiz
+          .closest(".seccion")
+          ?.querySelector<HTMLElement>('.disponibilidad__hora[aria-pressed="true"]');
+
+        const mensaje = armarMensajeCalculadora({
+          servicio: estado.servicio,
+          largo: estado.largo ?? undefined,
+          opcion: estado.opcion ?? undefined,
+          historial: estado.historial,
+          agregados: estado.agregados,
+          hora: horaBoton?.dataset.mensaje,
+        });
+        whatsappBtn.href = urlWhatsApp(terra.whatsapp, mensaje);
+      } else {
+        resultado.hidden = true;
+      }
+    }
+
+    raiz.querySelector('[data-grupo="servicio"]')!.addEventListener("click", (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(".calculador__opcion");
+      if (!btn) return;
+      estado.servicio = servicios.find((s) => s.slug === btn.dataset.valor) ?? null;
+      estado.largo = null;
+      estado.opcion = null;
+      estado.agregados = [];
+      render();
+    });
+
+    grupoLargo.addEventListener("click", (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(".calculador__opcion");
+      if (!btn) return;
+      estado.largo = btn.dataset.valor!;
+      render();
+    });
+
+    grupoOpcion.addEventListener("click", (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(".calculador__opcion");
+      if (!btn) return;
+      estado.opcion = btn.dataset.valor!;
+      render();
+    });
+
+    raiz.querySelector('[data-grupo="historial"]')!.addEventListener("click", (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(".calculador__opcion");
+      if (!btn) return;
+      const valor = btn.dataset.valor!;
+
+      if (valor === "nada") {
+        estado.historial = estado.historial.includes("nada") ? [] : ["nada"];
+      } else {
+        estado.historial = estado.historial.filter((h) => h !== "nada");
+        if (estado.historial.includes(valor)) {
+          estado.historial = estado.historial.filter((h) => h !== valor);
+        } else {
+          estado.historial = [...estado.historial, valor];
+        }
+      }
+      render();
+    });
+
+    raiz.querySelector('[data-grupo="agregados"]')!.addEventListener("click", (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(".calculador__opcion");
+      if (!btn) return;
+      const valor = btn.dataset.valor!;
+      estado.agregados = estado.agregados.includes(valor)
+        ? estado.agregados.filter((a) => a !== valor)
+        : [...estado.agregados, valor];
+      render();
+    });
+
+    // Disponibilidad.astro (si está activa) vive en la misma Seccion y avisa
+    // cuando cambia la hora elegida, para volver a armar el mensaje de WhatsApp.
+    raiz.closest(".seccion")?.addEventListener("disponibilidad:seleccion", render);
+
+    render();
+  }
+</script>

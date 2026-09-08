@@ -1,0 +1,73 @@
+---
+import { terra } from "../../data/negocio";
+import Seccion from "../Seccion.astro";
+
+const sellos = [
+  {
+    titulo: "Registro ISP y ANVISA",
+    texto: "Nuestras líneas de alisado cuentan con registro ISP y ANVISA",
+  },
+  {
+    titulo: "Diagnóstico incluido",
+    texto: "Va antes de cada tratamiento, sin costo aparte",
+  },
+  {
+    titulo: `Garantía de ${terra.garantia}`,
+    texto: "Si algo no quedó bien, lo resolvemos",
+  },
+  {
+    titulo: `${terra.estilistas} estilistas especializadas`,
+    texto: "Cada una con su propia especialidad",
+  },
+];
+---
+
+<Seccion fondo="base">
+  <h2 class="confianza__titulo-seccion">Por qué elegir Terra</h2>
+  <ul class="confianza__grid">
+    {
+      sellos.map((sello) => (
+        <li data-reveal-item class="confianza__item">
+          <p class="confianza__titulo">{sello.titulo}</p>
+          <p class="texto-sm">{sello.texto}</p>
+        </li>
+      ))
+    }
+  </ul>
+</Seccion>
+
+<style>
+  .confianza__titulo-seccion {
+    text-align: center;
+    margin-block-end: var(--space-6);
+  }
+
+  .confianza__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+    text-align: center;
+  }
+
+  .confianza__item {
+    padding-inline: var(--space-2);
+  }
+
+  .confianza__titulo {
+    font-family: var(--fuente-titulo);
+    font-weight: 100;
+    font-size: var(--text-h3);
+    letter-spacing: var(--tracking-titulo);
+    color: var(--fg-titulo);
+    margin-block-end: var(--space-1);
+  }
+
+  @media (min-width: 768px) {
+    .confianza__grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+</style>

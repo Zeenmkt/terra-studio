@@ -1,0 +1,143 @@
+---
+// Solo se debe usar detrás de `{DISPONIBILIDAD_ACTIVA && <Disponibilidad ... />}`
+// en la página que lo llama — así, apagado, Astro ni siquiera renderiza este
+// componente ni incluye su script. La comprobación de acá adentro es un
+// respaldo, no el mecanismo principal.
+import { DISPONIBILIDAD_ACTIVA } from "../lib/disponibilidad";
+
+interface Props {
+  servicio: string; // slug de servicios.js
+}
+
+const { servicio } = Astro.props;
+---
+
+{
+  DISPONIBILIDAD_ACTIVA && (
+    <div class="disponibilidad" data-servicio={servicio}>
+      <h3>Horas disponibles</h3>
+      <p class="texto-sm disponibilidad__cargando" data-estado="cargando">
+        Buscando horas...
+      </p>
+      <div class="disponibilidad__dias" data-dias hidden />
+      <p class="texto-sm disponibilidad__vacio" data-estado="vacio" hidden>
+        No encontramos horas libres en los próximos 14 días. Escríbenos por
+        WhatsApp y coordinamos igual.
+      </p>
+      <p class="texto-sm disponibilidad__aviso">
+        Estas horas son referenciales. Te confirmamos por WhatsApp.
+      </p>
+    </div>
+  )
+}
+
+<style>
+  .disponibilidad {
+    margin-block-start: var(--space-4);
+    padding: var(--space-4);
+    border-radius: 16px;
+    background: var(--bg-base);
+    color: var(--fg-base);
+  }
+
+  .disponibilidad__dias {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-block: var(--space-3);
+  }
+
+  .disponibilidad__dias[hidden] {
+    display: none;
+  }
+
+  .disponibilidad__dia-titulo {
+    font-weight: 600;
+    text-transform: capitalize;
+    margin-block-end: var(--space-1);
+  }
+
+  .disponibilidad__horas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .disponibilidad__hora {
+    padding: 0.75rem var(--space-2);
+    border: 1px solid var(--color-marron);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--color-marron);
+    font-family: var(--fuente-cuerpo);
+    font-size: var(--text-sm);
+    cursor: pointer;
+    transition: background var(--dur-hover) var(--ease), color var(--dur-hover) var(--ease);
+  }
+
+  .disponibilidad__hora[aria-pressed="true"] {
+    background: var(--bg-impacto);
+    border-color: var(--color-terracota);
+    color: var(--fg-impacto);
+  }
+
+  .disponibilidad__aviso {
+    color: var(--color-marron);
+  }
+</style>
+
+<script>
+  import { obtenerHoras, agruparPorDia, formatearHoraParaWhatsApp } from "../lib/disponibilidad";
+
+  for (const raiz of document.querySelectorAll<HTMLElement>(".disponibilidad")) {
+    const servicio = raiz.dataset.servicio!;
+    const cargando = raiz.querySelector<HTMLElement>('[data-estado="cargando"]')!;
+    const vacio = raiz.querySelector<HTMLElement>('[data-estado="vacio"]')!;
+    const contenedorDias = raiz.querySelector<HTMLElement>("[data-dias]")!;
+
+    function render(fechas: Date[]) {
+      cargando.hidden = true;
+
+      if (fechas.length === 0) {
+        vacio.hidden = false;
+        return;
+      }
+
+      contenedorDias.hidden = false;
+      contenedorDias.innerHTML = "";
+
+      for (const grupo of agruparPorDia(fechas)) {
+        const bloque = document.createElement("div");
+
+        const titulo = document.createElement("p");
+        titulo.className = "disponibilidad__dia-titulo";
+        titulo.textContent = grupo.etiquetaDia;
+        bloque.appendChild(titulo);
+
+        const filaHoras = document.createElement("div");
+        filaHoras.className = "disponibilidad__horas";
+
+        for (const { fecha, etiqueta } of grupo.horas) {
+          const boton = document.createElement("button");
+          boton.type = "button";
+          boton.className = "disponibilidad__hora";
+          boton.textContent = etiqueta;
+          boton.dataset.mensaje = formatearHoraParaWhatsApp(fecha);
+          boton.setAttribute("aria-pressed", "false");
+          boton.addEventListener("click", () => {
+            for (const otro of raiz.querySelectorAll(".disponibilidad__hora")) {
+              otro.setAttribute("aria-pressed", String(otro === boton));
+            }
+            raiz.dispatchEvent(new CustomEvent("disponibilidad:seleccion", { bubbles: true }));
+          });
+          filaHoras.appendChild(boton);
+        }
+
+        bloque.appendChild(filaHoras);
+        contenedorDias.appendChild(bloque);
+      }
+    }
+
+    obtenerHoras(servicio).then(render);
+  }
+</script>

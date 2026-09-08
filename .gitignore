@@ -1,0 +1,33 @@
+# build output
+dist/
+# generated types
+.astro/
+
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+
+# environment variables
+.env
+.env.production
+
+# Netlify CLI local (credenciales de Google para Disponibilidad viven acá
+# en desarrollo — nunca en el repo)
+.netlify/
+
+# macOS-specific files
+.DS_Store
+
+# jetbrains setting folder
+.idea/
+
+# material gráfico pesado (mockups del brandboard, exportes para redes) —
+# es archivo de referencia, no algo que la web sirva. No va al repo.
+assets/brandboard/
+assets/redes-sociales/

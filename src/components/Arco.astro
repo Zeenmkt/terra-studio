@@ -1,0 +1,54 @@
+---
+// Marco en forma de arco: base plana, remate semicircular. Viene del isotipo.
+// Para imágenes, resultados del calculador, o cualquier acento que necesite esta forma.
+// fondo: cuando no hay foto real todavía, el arco puede ser un bloque de color.
+interface Props {
+  ratio?: string; // ej. "3 / 4"
+  fondo?: "base" | "impacto" | "oscuro" | "superficie";
+  class?: string;
+}
+
+const { ratio, fondo, class: className } = Astro.props;
+---
+
+<div
+  class:list={["arco", fondo && `arco--${fondo}`, className]}
+  style={ratio ? { aspectRatio: ratio } : undefined}
+>
+  <slot />
+</div>
+
+<style>
+  .arco {
+    border-radius: var(--radius-arco);
+    overflow: hidden;
+    transition: background-color var(--dur-hover) var(--ease);
+  }
+
+  .arco :global(img),
+  .arco :global(video) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .arco--base {
+    background: var(--bg-base);
+    color: var(--fg-base);
+  }
+
+  .arco--impacto {
+    background: var(--bg-impacto);
+    color: var(--fg-impacto);
+  }
+
+  .arco--oscuro {
+    background: var(--bg-oscuro);
+    color: var(--fg-oscuro);
+  }
+
+  .arco--superficie {
+    background: var(--bg-superficie);
+    color: var(--fg-superficie);
+  }
+</style>

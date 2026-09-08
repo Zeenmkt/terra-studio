@@ -1,0 +1,234 @@
+---
+import { servicios } from "../data/servicios";
+import { formatearCLP } from "../lib/formato";
+import { urlWhatsApp } from "../lib/whatsapp";
+import { terra } from "../data/negocio";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Seccion from "../components/Seccion.astro";
+import Arco from "../components/Arco.astro";
+import Boton from "../components/Boton.astro";
+import Calculador from "../components/Calculador.astro";
+import Disponibilidad from "../components/Disponibilidad.astro";
+import { DISPONIBILIDAD_ACTIVA } from "../lib/disponibilidad";
+import { schemaServicio } from "../lib/schema";
+
+export function getStaticPaths() {
+  return servicios.map((servicio) => ({
+    params: { slug: servicio.slug },
+    props: { servicio },
+  }));
+}
+
+const { servicio } = Astro.props;
+const otros = servicios.filter((s) => s.slug !== servicio.slug);
+const whatsappUrl = urlWhatsApp(terra.whatsapp, `Hola! Quiero agendar ${servicio.nombre}.`);
+const sos = servicios.find((s) => s.slug === "reconstruccion-sos");
+const noEsTerminaEnSos = servicio.noEs && sos && servicio.noEs.endsWith(sos.nombre);
+const noEsInicio = noEsTerminaEnSos ? servicio.noEs.slice(0, -sos.nombre.length) : servicio.noEs;
+const schema = schemaServicio(servicio, terra, Astro.site);
+---
+
+<BaseLayout
+  title={`${servicio.metaTitulo} | Terra Studio`}
+  description={servicio.metaDescripcion}
+>
+  <Fragment slot="schema">
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  </Fragment>
+  <Seccion fondo="base">
+    <div class="landing__hero">
+      <Arco ratio="4 / 3" fondo="superficie" class="landing__imagen" />
+      <div>
+        <h1>{servicio.nombre}</h1>
+        <p class="prosa">{servicio.bajada}</p>
+        <Boton variante="primario" href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+          Agendar por WhatsApp
+        </Boton>
+      </div>
+    </div>
+  </Seccion>
+
+  {
+    (servicio.descripcion || servicio.asesoria) && (
+      <Seccion fondo="oscuro">
+        <h2>Qué es</h2>
+        <p class="prosa">{servicio.descripcion ?? servicio.asesoria}</p>
+        {servicio.idealPara && (
+          <p class="prosa landing__ideal-para">
+            <strong>Ideal para:</strong> {servicio.idealPara}
+          </p>
+        )}
+        {servicio.noEs && noEsTerminaEnSos && (
+          <p class="prosa landing__no-es">
+            {noEsInicio}
+            <a href={`/${sos.slug}`}>{sos.nombre}</a>.
+          </p>
+        )}
+        {servicio.noEs && !noEsTerminaEnSos && (
+          <p class="prosa landing__no-es">{servicio.noEs}</p>
+        )}
+      </Seccion>
+    )
+  }
+
+  {
+    servicio.incluye && (
+      <Seccion fondo="base">
+        <h2>Qué incluye</h2>
+        <ul class="landing__incluye">
+          {servicio.incluye.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+      </Seccion>
+    )
+  }
+
+  {
+    servicio.opciones && (
+      <Seccion fondo="base">
+        <h2>Opciones</h2>
+        <ul class="landing__opciones">
+          {servicio.opciones.map((o) => (
+            <li>
+              <div class="landing__opciones-fila">
+                <span>{o.nombre}</span>
+                <span class="landing__opciones-precio">{formatearCLP(o.precio)}</span>
+              </div>
+              {o.detalle && <p class="texto-sm">{o.detalle}</p>}
+            </li>
+          ))}
+        </ul>
+      </Seccion>
+    )
+  }
+
+  {
+    servicio.restricciones && (
+      <Seccion fondo="base">
+        <h2>Antes de agendar</h2>
+        <ul class="landing__restricciones">
+          {servicio.restricciones.map((r) => (
+            <li>{r.texto}</li>
+          ))}
+        </ul>
+      </Seccion>
+    )
+  }
+
+  {/* fondo="base": Calculador da por hecho ese fondo, ver la nota en Calculador.astro */}
+  <Seccion fondo="base">
+    <h2 class="landing__calculador-titulo">Calcula tu valor referencial</h2>
+    <Calculador servicioInicial={servicio.slug} />
+    {DISPONIBILIDAD_ACTIVA && <Disponibilidad servicio={servicio.slug} />}
+  </Seccion>
+
+  <Seccion fondo="base">
+    <h2 class="landing__otros-titulo">Otros servicios</h2>
+    <ul class="landing__otros">
+      {
+        otros.map((s) => (
+          <li>
+            <a href={`/${s.slug}`}>{s.nombre}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </Seccion>
+</BaseLayout>
+
+<style>
+  .landing__hero {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+    align-items: center;
+  }
+
+  .landing__imagen {
+    max-width: 320px;
+    margin-inline: auto;
+  }
+
+  .landing__hero h1 {
+    margin-block-end: var(--space-2);
+  }
+
+  .landing__hero .prosa {
+    margin-block-end: var(--space-3);
+  }
+
+  .landing__ideal-para,
+  .landing__no-es {
+    margin-block-start: var(--space-3);
+  }
+
+  .landing__incluye,
+  .landing__restricciones {
+    padding-left: 1.2em;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .landing__opciones {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .landing__opciones-fila {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 600;
+  }
+
+  .landing__opciones-precio {
+    color: var(--fg-titulo);
+  }
+
+  .landing__calculador-titulo,
+  .landing__otros-titulo {
+    text-align: center;
+    margin-block-end: var(--space-4);
+  }
+
+  .landing__otros {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    justify-content: center;
+  }
+
+  .landing__otros a {
+    display: inline-block;
+    padding: 0.75rem var(--space-3);
+    border: 1px solid var(--color-marron);
+    border-radius: 999px;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    transition: background var(--dur-hover) var(--ease), color var(--dur-hover) var(--ease);
+  }
+
+  .landing__otros a:hover {
+    background: var(--bg-impacto);
+    border-color: var(--color-terracota);
+    color: var(--fg-impacto);
+  }
+
+  @media (min-width: 768px) {
+    .landing__hero {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    }
+
+    .landing__imagen {
+      max-width: none;
+    }
+  }
+</style>

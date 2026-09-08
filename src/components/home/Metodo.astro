@@ -1,0 +1,78 @@
+---
+import Seccion from "../Seccion.astro";
+import Arco from "../Arco.astro";
+
+const pasos = [
+  "Miramos tu cuero cabelludo",
+  "Revisamos tu fibra",
+  "Preguntamos tu historial",
+  "Recién ahí decidimos, juntas",
+];
+---
+
+<Seccion id="metodo" fondo="impacto">
+  <h2 class="metodo__titulo">El método</h2>
+  <ol class="metodo__pasos">
+    {
+      pasos.map((paso) => (
+        <li data-reveal-item>
+          <Arco fondo="base" class="metodo__arco">
+            <p>{paso}</p>
+          </Arco>
+        </li>
+      ))
+    }
+  </ol>
+  <p class="metodo__cierre">El diagnóstico va incluido y va antes de todo.</p>
+</Seccion>
+
+<style>
+  .metodo__titulo {
+    text-align: center;
+    margin-block-end: var(--space-6);
+  }
+
+  .metodo__pasos {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
+  }
+
+  /* :global — .metodo__arco vive en el <div> que renderiza Arco.astro, no en
+     un elemento propio de este componente (ver la misma nota en Header.astro). */
+  :global(.metodo__arco) {
+    height: 100%;
+    min-height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-4);
+    text-align: center;
+  }
+
+  :global(.metodo__arco p) {
+    font-family: var(--fuente-titulo);
+    font-weight: 100;
+    font-size: var(--text-h3);
+    line-height: var(--leading-h3);
+    letter-spacing: var(--tracking-titulo);
+  }
+
+  .metodo__cierre {
+    margin-block-start: var(--space-6);
+    text-align: center;
+    font-family: var(--fuente-titulo);
+    font-weight: 100;
+    font-size: var(--text-h3);
+    letter-spacing: var(--tracking-titulo);
+  }
+
+  @media (min-width: 768px) {
+    .metodo__pasos {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+</style>

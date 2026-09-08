@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://terra-studio.netlify.app/sitemap-index.xml

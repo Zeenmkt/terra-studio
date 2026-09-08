@@ -1,0 +1,28 @@
+export const terra = {
+  nombre: "Terra Studio",
+  bajada: "Estudio de belleza integral",
+  claim: "Una experiencia sensorial que transforma tu interior",
+  ciudad: "Temuco",
+  direccion: {
+    calle: "España 446",
+    detalle: "Edificio Nuevo Centro, oficina 206, 2º piso",
+    referencia: "Al lado del Mall Portal Temuco",
+    ciudad: "Temuco",
+    region: "Araucanía",
+    pais: "Chile",
+    codigoPostal: "4801011",
+  },
+  whatsapp: "56968183234",
+  instagram: "@terrastudio",
+  horario: {
+    lunes: "09:00 - 19:00",
+    martes: "09:00 - 19:00",
+    miercoles: "09:00 - 19:00",
+    jueves: "09:00 - 19:00",
+    viernes: "09:00 - 19:00",
+    sabado: "09:00 - 19:00",
+    domingo: null,
+  },
+  estilistas: 6,
+  garantia: "1 mes",
+};
