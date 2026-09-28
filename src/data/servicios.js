@@ -47,6 +47,49 @@ export const servicios = [
     duracionAviso: "Considera mínimo 4 horas",
   },
   {
+    // Único servicio sin precio publicado. No es un olvido: el valor depende de
+    // la base real, de cuánto hay que cubrir y de si hubo decoloración antes,
+    // así que Terra lo cotiza con foto — es lo mismo que comunica en sus
+    // anuncios. Por eso lleva `cotizaConFoto` en vez de `precios`/`opciones`,
+    // no aparece en el calculador y su landing muestra el proceso de
+    // cotización en lugar del precio. Todo el texto de acá sale de los cuatro
+    // anuncios de colorimetría de la cuenta de Terra, no está inventado.
+    slug: "colorimetria",
+    nombre: "Colorimetría",
+    bajada: "El color se calcula, no se improvisa",
+    metaTitulo: "Colorimetría y corrección de color en Temuco",
+    metaDescripcion:
+      "Color y corrección de color en Temuco. Mándanos una foto con luz natural y te decimos qué es posible, en cuántas sesiones y cuánto cuesta, antes de que agendes.",
+    metodo: "whatsapp",
+    cotizaConFoto: true,
+    descripcion:
+      "La fórmula no es la misma para todas. Depende de tu base real, de cuánto necesitas cubrir y de qué le hicieron antes a tu cabello. Por eso el color se calcula: miramos una foto tuya con luz natural y recién ahí te decimos qué es posible.",
+    idealPara:
+      "Cambiar de tono, cubrir canas, o corregir un color que no quedó como esperabas",
+    cotizacion: {
+      pasos: [
+        "Mándanos una foto de tu cabello con luz natural, sin filtro.",
+        "Te decimos qué es posible, en cuántas sesiones y cuánto cuesta.",
+        "Recién ahí agendas, con el valor ya conversado.",
+      ],
+      nota: "También te decimos con cuánto tiempo vas a necesitar retoque, para que puedas organizarte y no te tome por sorpresa.",
+    },
+    restricciones: [
+      {
+        tipo: "sesiones",
+        titulo: "Puede tomar más de una sesión",
+        texto:
+          "A veces se llega en una sesión, a veces en dos, y a veces conviene otro tono que te va a favorecer más. Te lo decimos antes de que agendes, no el día de la cita.",
+      },
+      {
+        tipo: "decoloracion",
+        titulo: "Si vienes a corregir un color",
+        texto:
+          "Primero vemos si se puede con matización, sin volver a decolorar. Decolorar encima arregla el tono y arruina la fibra: el criterio es ver primero si se puede sin castigar más tu cabello, y recién ahí evaluar otra cosa.",
+      },
+    ],
+  },
+  {
     slug: "reconstruccion-sos",
     nombre: "Reconstrucción SOS",
     bajada: "Restauración real, dentro de la fibra",

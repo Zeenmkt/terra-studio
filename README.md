@@ -523,9 +523,32 @@ tarjeta pero sin material propio, y esa imagen sí muestra lo que deja el
 tratamiento. Ahora es la única de esa clienta, así que las cuatro tarjetas
 muestran cuatro personas distintas.
 
-Queda **10 fotos más de colorimetría** sin destino, que suman 33 con las del
-primer lote: es el servicio del que más material hay y el único que no existe en
-el sitio (pendiente 4).
+Las **10 fotos de colorimetría** ya tienen destino: ver la sección siguiente.
+
+## Colorimetría · séptimo servicio (28-09-2026)
+
+Es el único servicio **sin precio publicado**, y no es un vacío por llenar: el
+valor depende de la base real, de cuánto hay que cubrir y de si hubo
+decoloración antes, así que Terra lo cotiza con foto. Eso se decidió mirando
+los cuatro anuncios de colorimetría de su propia cuenta — de ahí sale todo el
+texto de la landing, nada está inventado.
+
+La marca de eso en los datos es `cotizaConFoto: true` en vez de
+`precios`/`opciones`. Tocarla cambia cinco comportamientos:
+
+| Dónde | Qué hace |
+| --- | --- |
+| `ServiciosGrid.astro` | La tarjeta dice "Se cotiza con foto" en vez de "Desde $…" |
+| `Calculador.astro` | El servicio no aparece entre las opciones: no hay precio que calcular |
+| `[slug].astro` | La landing muestra "Cómo cotizamos tu color" en lugar del calculador |
+| `[slug].astro` | El botón dice "Cotizar por WhatsApp" y el mensaje arranca con la foto, no con el agendamiento |
+| `schema.js` | Se omite `offers`: un precio inventado en el schema sale publicado en Google |
+
+Si mañana Konny define una lista de precios para color, basta reemplazar
+`cotizaConFoto` por `precios` y los cinco comportamientos vuelven solos al
+camino normal.
+
+Fotos: `colorimetría/4.2` en la tarjeta y `colorimetría/5.2` en la landing.
 
 ## Pendientes (marcadores, no contenido inventado)
 
@@ -535,7 +558,8 @@ el sitio (pendiente 4).
    una sola foto propia, que por eso mantienen el arco de color en su landing.
 2. ~~Antes/después autorizados~~ — resuelto el 27-09-2026 con el material de Drive.
 3. Reseñas con nombre y autorización
-4. ¿Se ofrece colorimetría? (séptimo landing, estructura preparada pero no creada)
+4. ~~¿Se ofrece colorimetría?~~ — resuelto el 28-09-2026: sí, y la landing ya está
+   publicada. Se cotiza con foto, sin precio de lista.
 5. Duración interna de cada tratamiento (para Disponibilidad — no se publica, solo filtra horas)
 6. Mapa de qué estilista hace qué tratamiento (para Disponibilidad)
 7. Verificar vigencia del registro ISP/ANVISA

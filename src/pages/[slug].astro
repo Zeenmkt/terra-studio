@@ -27,11 +27,18 @@ const otros = servicios.filter((s) => s.slug !== servicio.slug);
 // ve en la imagen, no lo que el servicio promete.
 const fotosLanding = {
   "alisado-organico": "Cabello largo, liso y con brillo después de un alisado orgánico",
+  colorimetria: "Cabello con un balayage caramelo y ondas sueltas",
   "corte-bordado": "Cabello largo en capas, con las puntas parejas y el largo intacto",
   cortes: "Corte en capas con movimiento, visto de perfil",
 };
 const fotoLanding = fotosLanding[servicio.slug];
-const whatsappUrl = urlWhatsApp(terra.whatsapp, `Hola! Quiero agendar ${servicio.nombre}.`);
+// En colorimetría no se agenda primero: se manda una foto y recién ahí se
+// agenda. El mensaje y el botón tienen que decir eso, o la página promete un
+// flujo y el WhatsApp arranca con otro.
+const whatsappUrl = servicio.cotizaConFoto
+  ? urlWhatsApp(terra.whatsapp, `Hola! Quiero cotizar mi ${servicio.nombre.toLowerCase()}. Les mando una foto.`)
+  : urlWhatsApp(terra.whatsapp, `Hola! Quiero agendar ${servicio.nombre}.`);
+const ctaPrincipal = servicio.cotizaConFoto ? "Cotizar por WhatsApp" : "Agendar por WhatsApp";
 const sos = servicios.find((s) => s.slug === "reconstruccion-sos");
 const noEsTerminaEnSos = servicio.noEs && sos && servicio.noEs.endsWith(sos.nombre);
 const noEsInicio = noEsTerminaEnSos ? servicio.noEs.slice(0, -sos.nombre.length) : servicio.noEs;
@@ -68,7 +75,7 @@ const schema = schemaServicio(servicio, terra, Astro.site);
         <h1>{servicio.nombre}</h1>
         <p class="prosa">{servicio.bajada}</p>
         <Boton variante="primario" href={whatsappUrl} target="_blank" rel="noopener noreferrer">
-          Agendar por WhatsApp
+          {ctaPrincipal}
         </Boton>
       </div>
     </div>
@@ -142,12 +149,38 @@ const schema = schemaServicio(servicio, terra, Astro.site);
     )
   }
 
+  {
+    /* Colorimetría no se calcula: el valor depende de la base real y de lo que
+       haya que corregir, así que en vez del calculador va el proceso con el que
+       Terra cotiza. Es la misma promesa que hace en sus anuncios. */
+    servicio.cotizacion && (
+      <Seccion fondo="base">
+        <h2 class="landing__cotizacion-titulo">Cómo cotizamos tu color</h2>
+        <ol class="landing__cotizacion">
+          {servicio.cotizacion.pasos.map((paso) => (
+            <li class="prosa">{paso}</li>
+          ))}
+        </ol>
+        {servicio.cotizacion.nota && (
+          <p class="prosa landing__cotizacion-nota">{servicio.cotizacion.nota}</p>
+        )}
+        <Boton variante="primario" href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+          Mandar mi foto por WhatsApp
+        </Boton>
+      </Seccion>
+    )
+  }
+
   {/* fondo="base": Calculador da por hecho ese fondo, ver la nota en Calculador.astro */}
-  <Seccion fondo="base">
-    <h2 class="landing__calculador-titulo">Calcula tu valor referencial</h2>
-    <Calculador servicioInicial={servicio.slug} />
-    {DISPONIBILIDAD_ACTIVA && <Disponibilidad servicio={servicio.slug} />}
-  </Seccion>
+  {
+    !servicio.cotizacion && (
+      <Seccion fondo="base">
+        <h2 class="landing__calculador-titulo">Calcula tu valor referencial</h2>
+        <Calculador servicioInicial={servicio.slug} />
+        {DISPONIBILIDAD_ACTIVA && <Disponibilidad servicio={servicio.slug} />}
+      </Seccion>
+    )
+  }
 
   <Seccion fondo="base">
     <h2 class="landing__otros-titulo">Otros servicios</h2>
@@ -213,6 +246,43 @@ const schema = schemaServicio(servicio, terra, Astro.site);
     display: flex;
     justify-content: space-between;
     font-weight: 600;
+  }
+
+  .landing__cotizacion-titulo {
+    margin-block-end: var(--space-4);
+  }
+
+  /* Los tres pasos van numerados porque el orden importa: la foto va antes de
+     agendar, no el día de la cita. */
+  .landing__cotizacion {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    counter-reset: paso;
+  }
+
+  .landing__cotizacion li {
+    counter-increment: paso;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--space-3);
+    align-items: start;
+  }
+
+  .landing__cotizacion li::before {
+    content: counter(paso);
+    font-family: var(--fuente-titulo);
+    font-size: var(--text-h3);
+    line-height: 1;
+    color: var(--color-terracota);
+  }
+
+  .landing__cotizacion-nota {
+    margin-block-start: var(--space-4);
+    margin-block-end: var(--space-4);
   }
 
   .landing__opciones-precio {

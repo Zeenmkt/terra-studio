@@ -4,7 +4,10 @@ import { formatearCLP } from "../../lib/formato";
 import Seccion from "../Seccion.astro";
 import Arco from "../Arco.astro";
 
+// Colorimetría no tiene precio publicado: se cotiza con foto. Devuelve null y
+// la tarjeta muestra eso en vez de un "Desde $…" inventado.
 function precioDesde(servicio) {
+  if (servicio.cotizaConFoto) return null;
   return servicio.precios
     ? servicio.precios.melena
     : Math.min(...servicio.opciones.map((o) => o.precio));
@@ -22,6 +25,7 @@ function precioDesde(servicio) {
 const fotos = {
   "alisado-organico": "Cabello largo, liso y con brillo después de un alisado orgánico",
   "botox-capilar": "Cabello suave y con brillo después de un botox capilar",
+  colorimetria: "Cabello con un color cobrizo parejo y ondas marcadas",
   "corte-bordado": "Cabello largo con las puntas parejas después de un corte bordado",
   cortes: "Corte en capas con ondas y movimiento",
 };
@@ -51,7 +55,13 @@ const fotos = {
             </Arco>
             <h3>{servicio.nombre}</h3>
             <p class="texto-sm">{servicio.bajada}</p>
-            <p class="tarjeta-servicio__precio">Desde {formatearCLP(precioDesde(servicio))}</p>
+            <p class="tarjeta-servicio__precio">
+              {
+                precioDesde(servicio) === null
+                  ? "Se cotiza con foto"
+                  : `Desde ${formatearCLP(precioDesde(servicio))}`
+              }
+            </p>
           </a>
         </li>
       ))

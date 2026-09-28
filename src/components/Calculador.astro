@@ -13,6 +13,9 @@ interface Props {
 
 const { servicioInicial } = Astro.props;
 const cortes = servicios.find((s) => s.slug === "cortes");
+// Colorimetría no entra: se cotiza con foto, no hay precio que calcular. Su
+// landing muestra el proceso de cotización en lugar de este calculador.
+const calculables = servicios.filter((s) => !s.cotizaConFoto);
 ---
 
 <div class="calculador" id="calculador" data-servicio-inicial={servicioInicial ?? ""}>
@@ -20,7 +23,7 @@ const cortes = servicios.find((s) => s.slug === "cortes");
     <h3 class="calculador__pregunta">¿Qué te quieres hacer?</h3>
     <div class="calculador__opciones" data-grupo="servicio" role="group" aria-label="Servicio">
       {
-        servicios.map((s) => (
+        calculables.map((s) => (
           <button type="button" class="calculador__opcion" data-valor={s.slug} aria-pressed="false">
             {s.nombre}
           </button>

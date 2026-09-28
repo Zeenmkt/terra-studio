@@ -59,9 +59,12 @@ export function schemaHairSalon(terra, servicios, urlSitio) {
 }
 
 export function schemaServicio(servicio, terra, urlSitio) {
+  // Colorimetría se cotiza con foto y no tiene precio publicado. Google prefiere
+  // que se omita `offers` antes que inventar un rango o declarar precio 0: un
+  // precio falso en el schema se muestra en resultados de búsqueda.
   const precios = servicio.precios
     ? Object.values(servicio.precios)
-    : servicio.opciones.map((o) => o.precio);
+    : (servicio.opciones?.map((o) => o.precio) ?? []);
 
   return {
     "@context": "https://schema.org",
@@ -76,11 +79,13 @@ export function schemaServicio(servicio, terra, urlSitio) {
     },
     areaServed: terra.direccion.ciudad,
     url: new URL(servicio.slug, urlSitio).toString(),
-    offers: {
-      "@type": "AggregateOffer",
-      priceCurrency: "CLP",
-      lowPrice: Math.min(...precios),
-      highPrice: Math.max(...precios),
-    },
+    ...(precios.length > 0 && {
+      offers: {
+        "@type": "AggregateOffer",
+        priceCurrency: "CLP",
+        lowPrice: Math.min(...precios),
+        highPrice: Math.max(...precios),
+      },
+    }),
   };
 }
