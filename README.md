@@ -461,10 +461,39 @@ Hoy está construida pero apagada (`DISPONIBILIDAD_ACTIVA = false` en
   abajo). Se extrajeron fotogramas de los videos del salón como alternativa
   mencionada en el prompt maestro — todavía no se ha hecho.
 
+## Estado · Material de clientas (27-09-2026)
+
+Konny mandó por Drive **46 fotos** (HEIC de iPhone, reensambladas a ~4284×5712)
+y **2 videos 4K a 120 fps** que son el mismo alisado antes y después.
+Autorización de las clientas confirmada por el cliente. Se cerraron tres
+marcadores de la portada:
+
+- **Hero**: fotograma del video del alisado terminado. La foto es muy luminosa
+  (pared blanca, cabello claro), así que el velo de la paleta se reforzó hasta
+  que el claim en crema pasara contraste: medido da 3,71–4,29 contra un mínimo
+  de 3,0, porque a 24px califica como texto grande.
+- **Servicios**: foto real en cuatro de las seis tarjetas. El arco pasó de
+  `4 / 3` a `3 / 4` porque el encuadre natural del cabello es vertical, y en
+  esas tarjetas el hover es un zoom (el cambio de fondo ya no se ve bajo la foto).
+- **Antes y después**: sección activada con cuatro fotos reales; el primer par
+  sale del mismo trabajo grabado en video.
+
+El material completo, convertido y clasificado por tratamiento, queda en
+`assets/fotos-clientas/` y `assets/videos-clientas/` — fuera del repo por peso
+(~820 MB), el original está en el Drive del cliente. Lo que la web sirve está
+recortado y optimizado en `public/fotos/` (1,4 MB en total).
+
+**Lo que este lote NO trae:** nada de Reconstrucción SOS ni de Masaje capilar
+(esas dos tarjetas siguen con el arco de color), ninguna foto del equipo, y
+ninguna del local propiamente tal — las que muestran el salón son trabajos con
+el salón de fondo. Además **23 de las 46 son de color**, el único servicio que
+no existe en el sitio.
+
 ## Pendientes (marcadores, no contenido inventado)
 
-1. Fotos reales del local y del equipo
-2. Antes/después autorizados
+1. Fotos del equipo y una foto del local propiamente tal (fachada o interior
+   amplio). El lote de septiembre no trae ninguna de las dos.
+2. ~~Antes/después autorizados~~ — resuelto el 27-09-2026 con el material de Drive.
 3. Reseñas con nombre y autorización
 4. ¿Se ofrece colorimetría? (séptimo landing, estructura preparada pero no creada)
 5. Duración interna de cada tratamiento (para Disponibilidad — no se publica, solo filtra horas)

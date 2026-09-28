@@ -31,3 +31,9 @@ pnpm-debug.log*
 # es archivo de referencia, no algo que la web sirva. No va al repo.
 assets/brandboard/
 assets/redes-sociales/
+
+# Material de clientas que mandó Konny (46 fotos + 2 videos 4K, ~820 MB).
+# El original vive en el Drive del cliente; acá queda la copia de trabajo.
+# Lo que la web sirve está recortado y optimizado en public/fotos/.
+assets/fotos-clientas/
+assets/videos-clientas/
