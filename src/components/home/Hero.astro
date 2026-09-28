@@ -8,12 +8,14 @@ const whatsappUrl = urlWhatsApp(terra.whatsapp);
 
 <section class="hero">
   <!--
-    PLACEHOLDER: acá va la foto real del salón a pantalla completa, con velo
-    terracota al 40% encima (ver sección 7.1 del prompt maestro). Mientras no
-    llega, el fondo es un degradado dentro de la misma paleta — nada de foto
-    inventada.
+    Foto real del salón (fotograma del video de un alisado terminado, 4K).
+    Encima va el velo de la paleta: sin él, el texto crema no pasa contraste
+    sobre una pared blanca. El velo es más denso en el centro, que es donde
+    cae el claim.
   -->
-  <div class="hero__fondo" aria-hidden="true"></div>
+  <div class="hero__fondo" aria-hidden="true">
+    <img src="/fotos/hero-salon.webp" alt="" width="1920" height="2560" />
+  </div>
 
   <div class="hero__contenido contenedor">
     <img
@@ -33,7 +35,6 @@ const whatsappUrl = urlWhatsApp(terra.whatsapp);
     <span></span>
   </a>
 
-  <p class="hero__marcador texto-sm">⬜ Foto del local pendiente</p>
 </section>
 
 <style>
@@ -51,12 +52,30 @@ const whatsappUrl = urlWhatsApp(terra.whatsapp);
     position: absolute;
     inset: 0;
     z-index: -1;
+    background: var(--color-marron);
+  }
+
+  .hero__fondo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+  }
+
+  /* La foto del salón es muy luminosa (pared blanca, cabello claro), así que
+     el velo tiene que ser denso o el claim en crema no pasa contraste. Medido:
+     con estos valores el texto queda sobre un fondo efectivo oscuro en toda
+     la zona del contenido. */
+  .hero__fondo::after {
+    content: "";
+    position: absolute;
+    inset: 0;
     background: radial-gradient(
-        120% 90% at 50% 0%,
-        color-mix(in srgb, var(--color-terracota) 55%, transparent),
-        transparent 60%
+        100% 70% at 50% 48%,
+        color-mix(in srgb, var(--color-marron) 94%, transparent),
+        color-mix(in srgb, var(--color-marron) 78%, transparent) 65%
       ),
-      var(--color-marron);
+      color-mix(in srgb, var(--color-marron) 62%, transparent);
   }
 
   .hero__contenido {
@@ -121,10 +140,4 @@ const whatsappUrl = urlWhatsApp(terra.whatsapp);
     }
   }
 
-  .hero__marcador {
-    position: absolute;
-    bottom: var(--space-2);
-    right: var(--space-2);
-    color: color-mix(in srgb, var(--color-crema) 70%, transparent);
-  }
 </style>

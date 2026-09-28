@@ -9,6 +9,16 @@ function precioDesde(servicio) {
     ? servicio.precios.melena
     : Math.min(...servicio.opciones.map((o) => o.precio));
 }
+
+// Solo los tratamientos de los que Konny mandó material propio llevan foto.
+// Reconstrucción SOS y Masaje capilar siguen con el arco de color hasta que
+// lleguen fotos de ESOS tratamientos — no se rellenan con fotos de otro.
+const fotos = {
+  "alisado-organico": "Cabello liso y con brillo después de un alisado orgánico",
+  "botox-capilar": "Cabello suave y con brillo después de un botox capilar",
+  "corte-bordado": "Corte bordado con las puntas parejas y el largo intacto",
+  cortes: "Corte en capas con movimiento natural",
+};
 ---
 
 <Seccion id="servicios" fondo="base">
@@ -18,7 +28,21 @@ function precioDesde(servicio) {
       servicios.map((servicio) => (
         <li data-reveal-item>
           <a href={`/${servicio.slug}`} class="tarjeta-servicio">
-            <Arco ratio="4 / 3" fondo="superficie" class="tarjeta-servicio__arco" />
+            <Arco
+              ratio="3 / 4"
+              fondo={fotos[servicio.slug] ? undefined : "superficie"}
+              class="tarjeta-servicio__arco"
+            >
+              {fotos[servicio.slug] && (
+                <img
+                  src={`/fotos/servicios/${servicio.slug}.webp`}
+                  alt={fotos[servicio.slug]}
+                  width="900"
+                  height="1200"
+                  loading="lazy"
+                />
+              )}
+            </Arco>
             <h3>{servicio.nombre}</h3>
             <p class="texto-sm">{servicio.bajada}</p>
             <p class="tarjeta-servicio__precio">Desde {formatearCLP(precioDesde(servicio))}</p>
@@ -70,9 +94,28 @@ function precioDesde(servicio) {
 
   /* :global — .tarjeta-servicio__arco vive en el <div> que renderiza Arco.astro.
      Ganamos especificidad a su regla .arco--superficie sumando el :hover del
-     padre (mismo patrón que en Header, ver la nota ahí). */
+     padre (mismo patrón que en Header, ver la nota ahí). Las tarjetas con foto
+     no tienen fondo propio, así que ahí el hover se resuelve con un zoom. */
   :global(.tarjeta-servicio:hover .tarjeta-servicio__arco) {
     background-color: var(--bg-impacto);
+  }
+
+  :global(.tarjeta-servicio__arco img) {
+    transition: transform var(--dur-hover) var(--ease);
+  }
+
+  :global(.tarjeta-servicio:hover .tarjeta-servicio__arco img) {
+    transform: scale(1.06);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(.tarjeta-servicio__arco img) {
+      transition: none;
+    }
+
+    :global(.tarjeta-servicio:hover .tarjeta-servicio__arco img) {
+      transform: none;
+    }
   }
 
   @media (min-width: 640px) {

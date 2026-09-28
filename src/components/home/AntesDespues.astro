@@ -2,28 +2,48 @@
 import Seccion from "../Seccion.astro";
 import Arco from "../Arco.astro";
 
-// ⬜ Pendiente: fotos reales de antes/después, autorizadas por cada clienta.
-// Estos arcos son marcadores de espacio, no fotos — cuando lleguen, cada uno
-// recibe una <img> igual que en ServiciosGrid.astro.
-const marcadores = new Array(4).fill(null);
+// Fotos reales de clientas del salón, con autorización confirmada.
+// El primer par sale del video 4K de un alisado (mismo trabajo, antes y
+// después); el segundo par es de otra clienta. Van en ese orden para que se
+// lean de a dos.
+const casos = [
+  {
+    src: "/fotos/antes-despues/1-antes.webp",
+    etiqueta: "Antes",
+    alt: "Cabello con frizz y mucho volumen antes del alisado orgánico",
+  },
+  {
+    src: "/fotos/antes-despues/2-despues.webp",
+    etiqueta: "Después",
+    alt: "El mismo cabello liso y con brillo después del alisado orgánico",
+  },
+  {
+    src: "/fotos/antes-despues/3-antes.webp",
+    etiqueta: "Antes",
+    alt: "Cabello encrespado y sin definición antes del tratamiento",
+  },
+  {
+    src: "/fotos/antes-despues/4-despues.webp",
+    etiqueta: "Después",
+    alt: "El mismo cabello suave y con movimiento después del tratamiento",
+  },
+];
 ---
 
 <Seccion fondo="base">
   <h2 class="antes-despues__titulo">Antes y después</h2>
   <ul class="antes-despues__grid">
     {
-      marcadores.map((_, i) => (
-        <li data-reveal-item>
-          <Arco
-            ratio="3 / 4"
-            fondo={i % 2 === 0 ? "superficie" : "impacto"}
-            class="antes-despues__arco"
-          />
+      casos.map((caso) => (
+        <li data-reveal-item class="antes-despues__caso">
+          <Arco ratio="3 / 4" class="antes-despues__arco">
+            <img src={caso.src} alt={caso.alt} width="700" height="933" loading="lazy" />
+          </Arco>
+          <p class="antes-despues__etiqueta texto-sm">{caso.etiqueta}</p>
         </li>
       ))
     }
   </ul>
-  <p class="texto-sm antes-despues__marcador">⬜ Fotos reales autorizadas, pendientes</p>
 </Seccion>
 
 <style>
@@ -41,9 +61,17 @@ const marcadores = new Array(4).fill(null);
     gap: var(--space-3);
   }
 
-  .antes-despues__marcador {
+  .antes-despues__caso {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .antes-despues__etiqueta {
     text-align: center;
-    margin-block-start: var(--space-4);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
     color: var(--color-marron);
   }
 
