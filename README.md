@@ -503,23 +503,29 @@ Con esto se llenaron **tres de los seis encabezados de landing**:
 | --- | --- | --- |
 | Alisado orgánico | `public/fotos/landings/alisado-organico.webp` | `alisados/3.2` |
 | Corte bordado profundo | `public/fotos/landings/corte-bordado.webp` | `cortes/2.2` |
-| Cortes | `public/fotos/landings/cortes.webp` | `cortes/5.2` |
+| Cortes | `public/fotos/landings/cortes.webp` | `cortes/4.2` |
 
 Los otros tres (Botox capilar, Reconstrucción SOS, Masaje capilar) mantienen el
 arco de color: **no se rellena una landing con la foto de otro tratamiento.**
 
-Dos cosas que este lote dejó abiertas:
+Y se corrigieron las tarjetas de la portada, que eran cuatro fotos de la misma
+clienta en la misma sesión — y la de Alisado orgánico mostraba ondas con capas,
+no un alisado:
 
-- `cortes/4.2` es la única foto donde se reconoce la cara de la clienta, y es la
-  mejor toma del lote. Está sin usar a propósito, a la espera de que Konny
-  confirme autorización de imagen para esa clienta en particular.
-- Las cuatro fotos de `public/fotos/servicios/` (tarjetas de la portada) son, a
-  la vista, **la misma clienta en la misma sesión**, y la de Alisado orgánico no
-  muestra un alisado sino ondas con capas. Conviene reemplazarlas con este lote.
+| Tarjeta | Archivo | Origen |
+| --- | --- | --- |
+| Alisado orgánico | `public/fotos/servicios/alisado-organico.webp` | `alisados/Alisado General 1` |
+| Corte bordado profundo | `public/fotos/servicios/corte-bordado.webp` | `cortes/3.2` |
+| Cortes | `public/fotos/servicios/cortes.webp` | `cortes/1.2` |
 
-Y **10 fotos más de colorimetría** sin destino, que suman 33 con las del primer
-lote: es el servicio del que más material hay y el único que no existe en el
-sitio (pendiente 4).
+Botox capilar conserva la foto del primer lote: es el único tratamiento con
+tarjeta pero sin material propio, y esa imagen sí muestra lo que deja el
+tratamiento. Ahora es la única de esa clienta, así que las cuatro tarjetas
+muestran cuatro personas distintas.
+
+Queda **10 fotos más de colorimetría** sin destino, que suman 33 con las del
+primer lote: es el servicio del que más material hay y el único que no existe en
+el sitio (pendiente 4).
 
 ## Pendientes (marcadores, no contenido inventado)
 
