@@ -21,6 +21,16 @@ export function getStaticPaths() {
 
 const { servicio } = Astro.props;
 const otros = servicios.filter((s) => s.slug !== servicio.slug);
+// Foto de encabezado, solo para los servicios de los que hay material real de
+// clientas. Los que no aparecen acá mantienen el arco de color hasta que llegue
+// su foto — no se rellena con la de otro tratamiento. El alt describe lo que se
+// ve en la imagen, no lo que el servicio promete.
+const fotosLanding = {
+  "alisado-organico": "Cabello largo, liso y con brillo después de un alisado orgánico",
+  "corte-bordado": "Cabello largo en capas, con las puntas parejas y el largo intacto",
+  cortes: "Media melena con ondas y movimiento después de un corte",
+};
+const fotoLanding = fotosLanding[servicio.slug];
 const whatsappUrl = urlWhatsApp(terra.whatsapp, `Hola! Quiero agendar ${servicio.nombre}.`);
 const sos = servicios.find((s) => s.slug === "reconstruccion-sos");
 const noEsTerminaEnSos = servicio.noEs && sos && servicio.noEs.endsWith(sos.nombre);
@@ -37,7 +47,23 @@ const schema = schemaServicio(servicio, terra, Astro.site);
   </Fragment>
   <Seccion fondo="base">
     <div class="landing__hero">
-      <Arco ratio="4 / 3" fondo="superficie" class="landing__imagen" />
+      <Arco
+        ratio={fotoLanding ? "3 / 4" : "4 / 3"}
+        fondo={fotoLanding ? undefined : "superficie"}
+        class={fotoLanding ? "landing__imagen landing__imagen--foto" : "landing__imagen"}
+      >
+        {
+          fotoLanding && (
+            <img
+              src={`/fotos/landings/${servicio.slug}.webp`}
+              alt={fotoLanding}
+              width="900"
+              height="1200"
+              fetchpriority="high"
+            />
+          )
+        }
+      </Arco>
       <div>
         <h1>{servicio.nombre}</h1>
         <p class="prosa">{servicio.bajada}</p>
@@ -145,7 +171,10 @@ const schema = schemaServicio(servicio, terra, Astro.site);
     align-items: center;
   }
 
-  .landing__imagen {
+  /* El elemento lo renderiza <Arco>, así que lleva el scope de ese componente
+     y no el de esta página: sin :global() estas reglas no aplican nunca.
+     Mismo motivo por el que ServiciosGrid usa :global() para su hover. */
+  :global(.landing__imagen) {
     max-width: 320px;
     margin-inline: auto;
   }
@@ -227,8 +256,15 @@ const schema = schemaServicio(servicio, terra, Astro.site);
       grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
     }
 
-    .landing__imagen {
+    :global(.landing__imagen) {
       max-width: none;
+    }
+
+    /* El arco de color es horizontal (4/3) y llena la columna sin problema.
+       La foto es vertical (3/4): sin tope crecería hasta ~680px de alto y
+       empujaría el texto fuera de la primera pantalla. */
+    :global(.landing__imagen--foto) {
+      max-width: 400px;
     }
   }
 </style>

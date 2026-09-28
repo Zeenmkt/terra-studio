@@ -489,10 +489,44 @@ ninguna del local propiamente tal — las que muestran el salón son trabajos co
 el salón de fondo. Además **23 de las 46 son de color**, el único servicio que
 no existe en el sitio.
 
+### Segundo lote · pares antes/después (27-09-2026)
+
+Llegaron 31 JPG ya editados y organizados en pares (`1.1` / `1.2`, `2.1` / `2.2`…):
+11 de alisados, 10 de colorimetría y 10 de cortes. Copia de trabajo en
+`assets/fotos-clientas/pares-*` (ignorada por git); el original llegó en
+`Escritorio\TERRA`. Son mejores que el primer lote: misma clienta dentro de cada
+par, encuadre consistente y el salón siempre de fondo.
+
+Con esto se llenaron **tres de los seis encabezados de landing**:
+
+| Landing | Archivo | Origen |
+| --- | --- | --- |
+| Alisado orgánico | `public/fotos/landings/alisado-organico.webp` | `alisados/3.2` |
+| Corte bordado profundo | `public/fotos/landings/corte-bordado.webp` | `cortes/2.2` |
+| Cortes | `public/fotos/landings/cortes.webp` | `cortes/5.2` |
+
+Los otros tres (Botox capilar, Reconstrucción SOS, Masaje capilar) mantienen el
+arco de color: **no se rellena una landing con la foto de otro tratamiento.**
+
+Dos cosas que este lote dejó abiertas:
+
+- `cortes/4.2` es la única foto donde se reconoce la cara de la clienta, y es la
+  mejor toma del lote. Está sin usar a propósito, a la espera de que Konny
+  confirme autorización de imagen para esa clienta en particular.
+- Las cuatro fotos de `public/fotos/servicios/` (tarjetas de la portada) son, a
+  la vista, **la misma clienta en la misma sesión**, y la de Alisado orgánico no
+  muestra un alisado sino ondas con capas. Conviene reemplazarlas con este lote.
+
+Y **10 fotos más de colorimetría** sin destino, que suman 33 con las del primer
+lote: es el servicio del que más material hay y el único que no existe en el
+sitio (pendiente 4).
+
 ## Pendientes (marcadores, no contenido inventado)
 
-1. Fotos del equipo y una foto del local propiamente tal (fachada o interior
-   amplio). El lote de septiembre no trae ninguna de las dos.
+1. Fotografía que falta pedir: los seis retratos del equipo, una foto del local
+   propiamente tal (fachada o interior amplio), y material de **Botox capilar**,
+   **Reconstrucción SOS** y **Masaje capilar** — los tres únicos tratamientos sin
+   una sola foto propia, que por eso mantienen el arco de color en su landing.
 2. ~~Antes/después autorizados~~ — resuelto el 27-09-2026 con el material de Drive.
 3. Reseñas con nombre y autorización
 4. ¿Se ofrece colorimetría? (séptimo landing, estructura preparada pero no creada)
