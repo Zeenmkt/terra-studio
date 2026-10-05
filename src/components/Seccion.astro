@@ -61,17 +61,24 @@ const {
     "(prefers-reduced-motion: reduce)"
   ).matches;
 
-  const objetivos = document.querySelectorAll("[data-reveal]");
+  const objetivos = [...document.querySelectorAll("[data-reveal]")];
 
   if (prefiereMenosMovimiento) {
     for (const el of objetivos) el.classList.add("is-visible");
   } else {
+    const revelar = (el: Element) => {
+      el.classList.add("is-visible");
+      observador.unobserve(el);
+    };
+
     const observador = new IntersectionObserver(
       (entradas) => {
         for (const entrada of entradas) {
-          if (entrada.isIntersecting) {
-            entrada.target.classList.add("is-visible");
-            observador.unobserve(entrada.target);
+          // `isIntersecting` cubre el scroll normal. La segunda condición cubre
+          // el scroll rápido: si la sección pasó de largo sin llegar a
+          // intersectar, queda arriba del viewport y hay que revelarla igual.
+          if (entrada.isIntersecting || entrada.boundingClientRect.top < 0) {
+            revelar(entrada.target);
           }
         }
       },
@@ -79,5 +86,23 @@ const {
     );
 
     for (const el of objetivos) observador.observe(el);
+
+    // Red de seguridad para los saltos que el observador no alcanza a ver: un
+    // ancla, el botón de volver, o un deslizamiento muy rápido en el teléfono.
+    // Sin esto una sección puede quedarse en opacidad 0 para siempre, y el
+    // visitante ve un hueco en blanco donde debería haber contenido.
+    const rescatar = () => {
+      for (const el of objetivos) {
+        if (
+          !el.classList.contains("is-visible") &&
+          el.getBoundingClientRect().bottom < 0
+        ) {
+          revelar(el);
+        }
+      }
+    };
+
+    window.addEventListener("scroll", rescatar, { passive: true });
+    window.addEventListener("pageshow", rescatar);
   }
 </script>

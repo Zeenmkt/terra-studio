@@ -8,13 +8,33 @@ const whatsappUrl = urlWhatsApp(terra.whatsapp);
 
 <section class="hero">
   <!--
-    Foto real del salón (fotograma del video de un alisado terminado, 4K).
-    Encima va el velo de la paleta: sin él, el texto crema no pasa contraste
-    sobre una pared blanca. El velo es más denso en el centro, que es donde
-    cae el claim.
+    Material real del salón. Encima va el velo de la paleta: sin él, el texto
+    crema no pasa contraste. El velo es más denso en el centro, donde cae el
+    claim.
+
+    El fotograma va primero y el video encima, con preload="none". Así la
+    primera pintura es una imagen de 100 KB y el LCP no depende del video: si
+    el video nunca llega a cargar —conexión lenta, ahorro de datos, o el
+    visitante pidió menos movimiento— la portada se ve exactamente igual,
+    solo quieta. El video pesa 620 KB y es puro agregado.
   -->
   <div class="hero__fondo" aria-hidden="true">
-    <img src="/fotos/hero-salon.webp" alt="" width="1920" height="2560" />
+    <img
+      src="/fotos/hero-poster.webp"
+      alt=""
+      width="720"
+      height="1280"
+      fetchpriority="high"
+      class="hero__cuadro"
+    />
+    <video
+      class="hero__video"
+      muted
+      loop
+      playsinline
+      preload="none"
+      data-hero-video
+    ></video>
   </div>
 
   <div class="hero__contenido contenedor">
@@ -55,11 +75,31 @@ const whatsappUrl = urlWhatsApp(terra.whatsapp);
     background: var(--color-marron);
   }
 
-  .hero__fondo img {
+  .hero__cuadro,
+  .hero__video {
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: center 30%;
+  }
+
+  /* El video se superpone al fotograma y aparece cuando ya puede reproducir,
+     así nunca se ve un salto ni un hueco negro. */
+  .hero__video {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 900ms var(--ease);
+  }
+
+  .hero__video.esta-listo {
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero__video {
+      display: none;
+    }
   }
 
   /* La foto del salón es muy luminosa (pared blanca, cabello claro), así que
@@ -141,3 +181,53 @@ const whatsappUrl = urlWhatsApp(terra.whatsapp);
   }
 
 </style>
+
+<script>
+  // El video del hero es un agregado, no un requisito. Se carga recién cuando
+  // la página ya terminó de cargar, y solo si conviene: nunca con ahorro de
+  // datos activado, nunca en 2G, y nunca si el visitante pidió menos
+  // movimiento. En cualquiera de esos casos queda el fotograma, que ya está
+  // pintado, y no se descarga ni un byte de video.
+  const video = document.querySelector<HTMLVideoElement>("[data-hero-video]");
+
+  if (video) {
+    const conexion = (navigator as any).connection;
+    const ahorroDeDatos = conexion?.saveData === true;
+    const redLenta = /(^|-)2g$/.test(conexion?.effectiveType ?? "");
+    const menosMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (!ahorroDeDatos && !redLenta && !menosMovimiento) {
+      const cargar = () => {
+        video.addEventListener(
+          "canplay",
+          () => {
+            video.classList.add("esta-listo");
+            video.play().catch(() => {
+              // Si el navegador bloquea la reproducción automática, el
+              // fotograma sigue ahí: no hay nada que reparar.
+              video.classList.remove("esta-listo");
+            });
+          },
+          { once: true }
+        );
+        video.src = "/video/hero.mp4";
+        video.load();
+      };
+
+      if (document.readyState === "complete") {
+        cargar();
+      } else {
+        window.addEventListener("load", cargar, { once: true });
+      }
+
+      // El navegador pausa el video mientras la pestaña está oculta. Si alguien
+      // abre la web en segundo plano y vuelve después, sin esto se encontraría
+      // el hero congelado en un fotograma.
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible" && video.src && video.paused) {
+          video.play().catch(() => {});
+        }
+      });
+    }
+  }
+</script>

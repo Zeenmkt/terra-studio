@@ -162,6 +162,78 @@ p {
 .js [data-reveal].is-visible [data-reveal-item]:nth-child(5) { transition-delay: calc(var(--stagger-step) * 4); }
 .js [data-reveal].is-visible [data-reveal-item]:nth-child(6) { transition-delay: calc(var(--stagger-step) * 5); }
 
+/* ---------------------------------------------------------------------------
+   Transición entre páginas
+
+   Es la versión nativa del navegador: no usa JavaScript ni enrutador, así que
+   cada página sigue siendo una carga normal y los seis scripts del sitio
+   (calculador, disponibilidad, formulario, menú, reveal y video del hero) se
+   ejecutan como siempre. La alternativa con enrutador obligaba a reescribirlos
+   todos y arriesgaba romper el calculador.
+
+   Chrome, Edge y Safari la aplican. Firefox todavía no, y ahí simplemente
+   navega como antes: no hay nada que reparar.
+--------------------------------------------------------------------------- */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root) {
+  animation: salir-pagina 200ms var(--ease) both;
+}
+
+::view-transition-new(root) {
+  animation: entrar-pagina 320ms var(--ease) both;
+}
+
+@keyframes salir-pagina {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes entrar-pagina {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Micro-animaciones de marca. Todas son CSS: cero bytes de descarga.
+--------------------------------------------------------------------------- */
+
+/* El arco viene del isotipo. Al entrar en pantalla crece apenas desde abajo,
+   como si se asentara en su lugar. */
+.js [data-reveal] .arco {
+  transform: scale(0.97);
+  transform-origin: bottom center;
+  transition: transform var(--dur-base) var(--ease);
+}
+
+.js [data-reveal].is-visible .arco {
+  transform: scale(1);
+}
+
+/* Subrayado que crece desde la izquierda en el menú, y que queda fijo en la
+   página en la que estás. */
+.encabezado__nav a::after {
+  content: "";
+  display: block;
+  height: 1px;
+  margin-block-start: 2px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-hover) var(--ease);
+}
+
+.encabezado__nav a:hover::after,
+.encabezado__nav a:focus-visible::after,
+.encabezado__nav a[aria-current="page"]::after {
+  transform: scaleX(1);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -170,5 +242,9 @@ p {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  @view-transition {
+    navigation: none;
   }
 }

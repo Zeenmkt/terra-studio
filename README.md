@@ -550,6 +550,62 @@ camino normal.
 
 Fotos: `colorimetría/4.2` en la tarjeta y `colorimetría/5.2` en la landing.
 
+## Movimiento y video (05-10-2026)
+
+La portada pasó de una foto fija a un video en loop, y se agregaron
+micro-animaciones de marca. La regla que gobierna todo esto: **nada de lo que
+se agregó puede retrasar la primera pintura ni encarecer el hosting.**
+
+### El video del hero
+
+`public/video/hero.mp4` · **620 KB** · 540×960 · 8 s · sin audio.
+
+Sale del material de Konny: un clip 4K a 60 fps de 27 segundos (manos sobre el
+cabello frente al espejo redondo). Se recortó el tramo de los segundos 10 a 18
+y se bajó a 540×960 con CRF 32. Esa resolución alcanza de sobra porque **el
+hero lleva encima un velo de la paleta que tapa el detalle fino**.
+
+Se probó WebM/VP9: pesaba 836 KB, más que el MP4. Se descartó.
+
+Cómo carga, y por qué así:
+
+1. Primero se pinta `fotos/hero-poster.webp` (100 KB), que es el primer
+   fotograma del mismo video. El LCP depende solo de esa imagen.
+2. El `<video>` lleva `preload="none"` y recién pide el archivo en el evento
+   `load`, cuando la página ya terminó de cargar.
+3. No se descarga **nada** si el visitante tiene ahorro de datos activado, si
+   está en 2G, o si pidió `prefers-reduced-motion`. En esos casos queda el
+   fotograma y la portada se ve igual, solo quieta.
+4. Al volver de una pestaña en segundo plano se reanuda solo: el navegador
+   pausa el video cuando la página está oculta, y sin eso quedaría congelado.
+
+Costo: 620 KB × 5.000 visitas ≈ 3 GB al mes. Netlify gratis da 100 GB.
+
+### Transición entre páginas
+
+Es la versión **nativa en CSS** (`@view-transition`), no el enrutador de Astro.
+La diferencia importa: el enrutador hace que los scripts dejen de
+re-ejecutarse al navegar, y el sitio tiene seis (calculador, disponibilidad,
+formulario, menú, reveal y el video del hero). Habría que reescribirlos todos,
+con el riesgo de romper el calculador. La versión CSS no usa JavaScript y cada
+página sigue siendo una carga normal.
+
+Chrome, Edge y Safari la aplican. En Firefox navega como antes, sin más.
+
+### Arreglo de un bug que ya estaba
+
+El sistema de reveal dejaba **secciones invisibles para siempre** con scroll
+rápido. El `IntersectionObserver` revelaba al intersectar y dejaba de observar;
+una sección que pasaba de largo sin llegar a intersectar se quedaba en
+`opacity: 0` y no se recuperaba ni volviendo hacia arriba. Medido: saltar al pie
+de la portada dejaba muertas El método, Por qué elegir Terra, Antes y después
+y Reseñas.
+
+En móvil, que es de donde viene casi todo el tráfico, pasa con un deslizamiento
+normal. Ahora el observador también revela cuando la sección quedó por encima
+del viewport, y hay una red de seguridad en `scroll` y `pageshow` para los
+saltos por ancla o por restauración de scroll.
+
 ## Pendientes (marcadores, no contenido inventado)
 
 1. Fotografía que falta pedir: los seis retratos del equipo, una foto del local
