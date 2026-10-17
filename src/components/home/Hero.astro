@@ -8,26 +8,40 @@ const whatsappUrl = urlWhatsApp(terra.whatsapp);
 
 <section class="hero">
   <!--
-    El salón de Terra: un paneo lento por el local (IMG_1306, tramo de 6 s
-    hacia adelante y de vuelta, así el loop no tiene corte). Encima va el velo
-    de la paleta, concentrado detrás del texto para que el resto del salón se
-    vea.
+    El salón de Terra: un paneo por la hilera de espejos (IMG_1310, grabado a
+    60 cuadros por segundo). Se estabilizó, va en cámara lenta al 50 % —sin
+    cuadros inventados, porque el original tiene el doble— y el loop va
+    siempre hacia adelante: el final se funde con el inicio en 1,5 s en vez
+    de devolverse en reversa, que era lo que hacía ver raro el anterior.
+
+    Hay dos versiones del mismo corte. En el teléfono, vertical (576×1024,
+    1,0 MB); desde 768 px, horizontal (1152×648, 0,9 MB), recortada del mismo
+    cuadro. Antes era un solo video vertical de 540 px y en escritorio se
+    estiraba al doble y se veía borroso. Cada visitante descarga uno solo.
 
     El fotograma va primero y el video encima, con preload="none". Así la
-    primera pintura es una imagen de 80 KB y el LCP no depende del video: si
+    primera pintura es una imagen liviana y el LCP no depende del video: si
     el video nunca llega a cargar —conexión lenta, ahorro de datos, o el
     visitante pidió menos movimiento— la portada se ve exactamente igual,
-    solo quieta. El video pesa 560 KB y es puro agregado.
+    solo quieta. Encima va el velo de la paleta, concentrado detrás del texto.
   -->
   <div class="hero__fondo" aria-hidden="true">
-    <img
-      src="/fotos/hero-poster.webp"
-      alt=""
-      width="720"
-      height="1280"
-      fetchpriority="high"
-      class="hero__cuadro"
-    />
+    <picture>
+      <source
+        media="(min-width: 768px)"
+        srcset="/fotos/hero-poster-escritorio.webp"
+        width="1280"
+        height="720"
+      />
+      <img
+        src="/fotos/hero-poster-movil.webp"
+        alt=""
+        width="720"
+        height="1280"
+        fetchpriority="high"
+        class="hero__cuadro"
+      />
+    </picture>
     <video
       class="hero__video"
       muted
@@ -74,6 +88,11 @@ const whatsappUrl = urlWhatsApp(terra.whatsapp);
     inset: 0;
     z-index: -1;
     background: var(--color-marron);
+  }
+
+  /* El <picture> no debe ocupar caja propia: la imagen se mide contra el fondo. */
+  .hero__fondo picture {
+    display: contents;
   }
 
   .hero__cuadro,
@@ -215,6 +234,11 @@ const whatsappUrl = urlWhatsApp(terra.whatsapp);
     const menosMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     if (!ahorroDeDatos && !redLenta && !menosMovimiento) {
+      // Mismo corte que el fotograma: horizontal desde 768 px, vertical abajo.
+      const escritorio = window.matchMedia("(min-width: 768px)");
+      const fuente = () =>
+        escritorio.matches ? "/video/hero-escritorio.mp4" : "/video/hero-movil.mp4";
+
       const cargar = () => {
         video.addEventListener(
           "canplay",
@@ -228,9 +252,17 @@ const whatsappUrl = urlWhatsApp(terra.whatsapp);
           },
           { once: true }
         );
-        video.src = "/video/hero.mp4";
+        video.src = fuente();
         video.load();
       };
+
+      // Si cambia el ancho (una tablet que se gira), se cambia al otro corte.
+      // Solo si el video ya se estaba usando: no se descarga nada antes de tiempo.
+      escritorio.addEventListener("change", () => {
+        if (!video.getAttribute("src")) return;
+        video.classList.remove("esta-listo");
+        cargar();
+      });
 
       if (document.readyState === "complete") {
         cargar();

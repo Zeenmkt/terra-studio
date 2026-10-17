@@ -628,6 +628,17 @@ ancho: en el teléfono el texto ocupa todo el ancho y la elipse es ancha y baja
 en 3,7:1 o más en 375, 768 y 1280 px (texto grande, el mínimo AA es 3:1).
 **Si se cambia el video, hay que volver a medir.**
 
+> **Actualizado el mismo 17-10:** el loop de ida y vuelta se veía raro (la
+> cámara «retrocedía») y en escritorio un video vertical de 540 px quedaba
+> estirado y borroso. Se rehízo con `IMG_1310` (60 cuadros por segundo):
+> estabilizado, en cámara lenta al 50 % sin cuadros inventados, y con un loop
+> que siempre avanza (el final se funde con el inicio en 1,5 s). Ahora hay dos
+> cortes del mismo video: `hero-movil.mp4` (576×1024, 1,0 MB) y
+> `hero-escritorio.mp4` (1152×648, 0,9 MB), cada uno con su fotograma; el
+> script elige por ancho (768 px) y cada visitante descarga uno solo. El
+> contraste del claim se volvió a medir en seis cuadros del recorrido: 3,73:1
+> o más en teléfono y escritorio, con el mismo velo.
+
 ### Calculador: estructura capilar y guía de largos
 
 - **Pregunta nueva, "¿Cómo es tu cabello?"** (liso, ondulado, rizado, afro),
