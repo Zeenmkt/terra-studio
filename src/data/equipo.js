@@ -21,9 +21,8 @@ export const equipo = [
   {
     nombre: "Konny Jiménez",
     rol: "Fundadora",
-    // Cuadro de un video que Konny grabó en el salón en septiembre de 2026
-    // (GRABACIONES/Septiembre, IMG_4049).
-    foto: "/fotos/equipo/konny.webp",
-    alt: "Konny Jiménez, fundadora de Terra Studio, sonriendo frente a los espejos del salón",
+    // Sin foto por decisión del 17-10-2026: se espera a las fotos que mande el
+    // equipo o a las que saquemos en la visita al salón, para que las seis
+    // queden con el mismo estilo. Mientras, la tarjeta muestra el arco de color.
   },
 ];

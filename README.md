@@ -669,9 +669,10 @@ solo con lo verificado y quedó lista para recibir al resto:
   servicios, el registro ISP/ANVISA de las líneas de alisado y la garantía.
   Debajo, la dirección, el equipo y la garantía en tres datos.
 - **El equipo** sale de `src/data/equipo.js` (lista pública; no confundir con
-  `estilistas.js`, que es interna para Disponibilidad). Hoy tiene a Konny, con
-  una foto sacada de su video de septiembre (`GRABACIONES/Septiembre`,
-  `IMG_4049`). Mientras falten personas aparece «Muy pronto vas a conocer al
+  `estilistas.js`, que es interna para Disponibilidad). Hoy tiene a Konny, sin
+  foto: se decidió esperar los retratos que mande el equipo o los que se saquen
+  en la visita al salón, para que las seis queden parejas. Sin foto, la tarjeta
+  muestra el arco de color. Mientras falten personas aparece «Muy pronto vas a conocer al
   resto del equipo»; el aviso se va solo cuando la lista llega a
   `terra.estilistas`.
 - Lo que falta se le pidió a Konny en «Lo que nos falta para la web - Terra
