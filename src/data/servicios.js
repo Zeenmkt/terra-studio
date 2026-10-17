@@ -158,3 +158,24 @@ export const agregados = [
 ];
 
 export const largos = ["Melena", "Medio", "Cintura", "Caderas", "Extra largo"];
+
+// Estructura capilar: se pregunta después del largo en todos los servicios que
+// varían por largo. Lo pidió Konny en la reunión del 14-10-2026: la tabla de
+// largos rige igual para todos, y la estructura es la única excepción porque
+// el cabello rizado y el afro llevan muchas más horas de trabajo.
+//
+// recargo: lo que suma al valor referencial.
+//   0     → no cambia el valor.
+//   null  → sí cambia, pero todavía no hay cifra: el calculador muestra el
+//           valor "desde" y dice que la diferencia se confirma por WhatsApp.
+//
+// Afro: los $30.000 son la cifra que dio Konny como ejemplo ("ponte tú 30
+// lucas más"). Rizado: dijo que siempre tiene otro valor, sin dar cifra. Las
+// dos están pendientes de confirmar con ella; cuando lo haga, se cambia acá y
+// nada más.
+export const estructuras = [
+  { nombre: "Liso", recargo: 0 },
+  { nombre: "Ondulado", recargo: 0 },
+  { nombre: "Rizado", recargo: null },
+  { nombre: "Afro", recargo: 30000 },
+];

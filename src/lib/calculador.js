@@ -12,12 +12,19 @@ export const ETIQUETA_HISTORIAL = {
   alisado: "alisado",
 };
 
-export function calcularPrecio(servicio, { largo, opcion, agregadosSeleccionados = [] } = {}) {
+// estructura: un elemento de `estructuras` (servicios.js) o undefined. Un
+// recargo null no suma nada acá: el calculador muestra el valor como "desde" y
+// avisa que la diferencia se confirma por WhatsApp.
+export function calcularPrecio(
+  servicio,
+  { largo, opcion, estructura, agregadosSeleccionados = [] } = {}
+) {
   let base = 0;
 
   if (servicio.variaPorLargo) {
     const clave = largo && CLAVE_LARGO[largo];
     base = clave ? servicio.precios[clave] : 0;
+    base += estructura?.recargo ?? 0;
   } else if (servicio.opciones) {
     const elegida = servicio.opciones.find((o) => o.nombre === opcion);
     base = elegida ? elegida.precio : 0;
@@ -36,6 +43,7 @@ export function armarMensajeCalculadora({
   servicio,
   largo,
   opcion,
+  estructura,
   historial = [],
   agregados = [],
   hora,
@@ -44,6 +52,9 @@ export function armarMensajeCalculadora({
 
   if (servicio.variaPorLargo && largo) {
     mensaje += ` Mi largo es ${largo.toLowerCase()}.`;
+    if (estructura) {
+      mensaje += ` Mi cabello es ${estructura.toLowerCase()}.`;
+    }
   } else if (opcion) {
     mensaje += ` Elegí: ${opcion.toLowerCase()}.`;
   }

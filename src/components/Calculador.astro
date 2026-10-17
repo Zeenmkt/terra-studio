@@ -3,9 +3,10 @@
 // seleccionar es marrón fijo (no hereda el color de la sección) — sobre
 // cualquier otro fondo del sistema no pasa contraste (verificado en la Fase
 // 9: marrón sobre terracota da ~1.1:1, casi invisible).
-import { servicios, agregados, largos } from "../data/servicios";
+import { servicios, agregados, largos, estructuras } from "../data/servicios";
 import { formatearCLP } from "../lib/formato";
 import Boton from "./Boton.astro";
+import GuiaLargos from "./GuiaLargos.astro";
 
 interface Props {
   servicioInicial?: string; // slug del servicio, para precargarlo en una landing
@@ -43,11 +44,27 @@ const calculables = servicios.filter((s) => !s.cotizaConFoto);
         ))
       }
     </div>
+    <div data-guia>
+      <GuiaLargos />
+    </div>
     <div class="calculador__opciones" data-grupo="opcion" role="group" aria-label="Tipo de corte" hidden>
       {
         cortes?.opciones.map((o) => (
           <button type="button" class="calculador__opcion" data-valor={o.nombre} aria-pressed="false">
             {o.nombre}
+          </button>
+        ))
+      }
+    </div>
+  </div>
+
+  <div data-paso="estructura" hidden>
+    <h3 class="calculador__pregunta">¿Cómo es tu cabello?</h3>
+    <div class="calculador__opciones" data-grupo="estructura" role="group" aria-label="Estructura capilar">
+      {
+        estructuras.map((e) => (
+          <button type="button" class="calculador__opcion" data-valor={e.nombre} aria-pressed="false">
+            {e.nombre}
           </button>
         ))
       }
@@ -78,6 +95,7 @@ const calculables = servicios.filter((s) => !s.cotizaConFoto);
     <p class="calculador__resumen texto-sm"></p>
     <p class="calculador__precio"></p>
     <p class="texto-sm calculador__etiqueta">valor referencial</p>
+    <p class="texto-sm calculador__estructura" hidden></p>
     <p class="texto-sm calculador__incluye" hidden></p>
     <p class="texto-sm">
       El valor final lo confirmamos en el salón: también depende de la cantidad de cabello y
@@ -201,7 +219,8 @@ const calculables = servicios.filter((s) => !s.cotizaConFoto);
     margin-block-end: var(--space-3);
   }
 
-  .calculador__incluye {
+  .calculador__incluye,
+  .calculador__estructura {
     margin-block-end: var(--space-2);
   }
 
@@ -227,7 +246,7 @@ const calculables = servicios.filter((s) => !s.cotizaConFoto);
 </style>
 
 <script>
-  import { servicios, agregados } from "../data/servicios";
+  import { servicios, agregados, estructuras } from "../data/servicios";
   import { terra } from "../data/negocio";
   import { formatearCLP } from "../lib/formato";
   import { urlWhatsApp } from "../lib/whatsapp";
@@ -240,6 +259,7 @@ const calculables = servicios.filter((s) => !s.cotizaConFoto);
       servicio: servicios.find((s) => s.slug === servicioInicial) ?? null,
       largo: null as string | null,
       opcion: null as string | null,
+      estructura: null as string | null,
       historial: [] as string[],
       agregados: [] as string[],
     };
@@ -249,6 +269,11 @@ const calculables = servicios.filter((s) => !s.cotizaConFoto);
     const preguntaVariante = raiz.querySelector<HTMLElement>('[data-texto="variante"]')!;
     const grupoLargo = raiz.querySelector<HTMLElement>('[data-grupo="largo"]')!;
     const grupoOpcion = raiz.querySelector<HTMLElement>('[data-grupo="opcion"]')!;
+    const guia = raiz.querySelector<HTMLElement>("[data-guia]")!;
+    const guiaFigura = raiz.querySelector<HTMLElement>("[data-guia-largos]")!;
+    const pasoEstructura = raiz.querySelector<HTMLElement>('[data-paso="estructura"]')!;
+    const grupoEstructura = raiz.querySelector<HTMLElement>('[data-grupo="estructura"]')!;
+    const estructuraEl = raiz.querySelector<HTMLElement>(".calculador__estructura")!;
     const advertencias = raiz.querySelector<HTMLElement>(".calculador__advertencias")!;
     const resultado = raiz.querySelector<HTMLElement>(".calculador__resultado")!;
     const resumen = raiz.querySelector<HTMLElement>(".calculador__resumen")!;
@@ -281,14 +306,24 @@ const calculables = servicios.filter((s) => !s.cotizaConFoto);
         const esLargo = estado.servicio.variaPorLargo;
         grupoLargo.hidden = !esLargo;
         grupoOpcion.hidden = esLargo;
+        guia.hidden = !esLargo;
+        pasoEstructura.hidden = !esLargo;
         preguntaVariante.textContent = esLargo ? "¿Cuál es tu largo?" : "¿Qué tipo de corte quieres?";
       } else {
         pasoVariante.hidden = true;
+        pasoEstructura.hidden = true;
+      }
+
+      if (estado.largo) {
+        guiaFigura.dataset.largo = estado.largo;
+      } else {
+        delete guiaFigura.dataset.largo;
       }
 
       marcarUnico(raiz.querySelector('[data-grupo="servicio"]')!, estado.servicio?.slug ?? null);
       marcarUnico(grupoLargo, estado.largo);
       marcarUnico(grupoOpcion, estado.opcion);
+      marcarUnico(grupoEstructura, estado.estructura);
       marcarMultiple(raiz.querySelector('[data-grupo="historial"]')!, estado.historial);
       marcarMultiple(raiz.querySelector('[data-grupo="agregados"]')!, estado.agregados);
 
@@ -308,7 +343,12 @@ const calculables = servicios.filter((s) => !s.cotizaConFoto);
       }
 
       // Resultado
-      const varianteLista = estado.servicio?.variaPorLargo ? estado.largo : estado.opcion;
+      // En los servicios por largo el resultado espera también la estructura:
+      // sin ella el valor podría quedar $30.000 corto para un cabello afro.
+      const varianteLista = estado.servicio?.variaPorLargo
+        ? estado.largo && estado.estructura
+        : estado.opcion;
+      const estructura = estructuras.find((e) => e.nombre === estado.estructura);
       if (estado.servicio && varianteLista) {
         resultado.hidden = false;
 
@@ -316,11 +356,28 @@ const calculables = servicios.filter((s) => !s.cotizaConFoto);
         const precio = calcularPrecio(estado.servicio, {
           largo: estado.largo ?? undefined,
           opcion: estado.opcion ?? undefined,
+          estructura: estado.servicio.variaPorLargo ? estructura : undefined,
           agregadosSeleccionados: agregadosElegidos,
         });
 
-        resumen.textContent = `${estado.servicio.nombre} · ${varianteLista}`;
-        precioEl.textContent = formatearCLP(precio);
+        const partes = estado.servicio.variaPorLargo
+          ? [estado.largo, estado.estructura]
+          : [estado.opcion];
+        resumen.textContent = [estado.servicio.nombre, ...partes].join(" · ");
+
+        // recargo null: el valor sube, pero aún no hay cifra publicada.
+        const recargoPendiente = estado.servicio.variaPorLargo && estructura?.recargo === null;
+        precioEl.textContent = (recargoPendiente ? "desde " : "") + formatearCLP(precio);
+
+        if (estado.servicio.variaPorLargo && estructura && estructura.recargo !== 0) {
+          const tipo = estructura.nombre.toLowerCase();
+          estructuraEl.hidden = false;
+          estructuraEl.textContent = recargoPendiente
+            ? `El cabello ${tipo} lleva más horas de trabajo, así que el valor sube. Te confirmamos cuánto por WhatsApp.`
+            : `Incluye ${formatearCLP(estructura.recargo!)} por cabello ${tipo}: lleva más horas de trabajo.`;
+        } else {
+          estructuraEl.hidden = true;
+        }
 
         if (estado.servicio.incluye) {
           incluyeEl.hidden = false;
@@ -347,6 +404,7 @@ const calculables = servicios.filter((s) => !s.cotizaConFoto);
           servicio: estado.servicio,
           largo: estado.largo ?? undefined,
           opcion: estado.opcion ?? undefined,
+          estructura: estado.estructura ?? undefined,
           historial: estado.historial,
           agregados: estado.agregados,
           hora: horaBoton?.dataset.mensaje,
@@ -363,6 +421,7 @@ const calculables = servicios.filter((s) => !s.cotizaConFoto);
       estado.servicio = servicios.find((s) => s.slug === btn.dataset.valor) ?? null;
       estado.largo = null;
       estado.opcion = null;
+      estado.estructura = null;
       estado.agregados = [];
       render();
     });
@@ -371,6 +430,13 @@ const calculables = servicios.filter((s) => !s.cotizaConFoto);
       const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(".calculador__opcion");
       if (!btn) return;
       estado.largo = btn.dataset.valor!;
+      render();
+    });
+
+    grupoEstructura.addEventListener("click", (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(".calculador__opcion");
+      if (!btn) return;
+      estado.estructura = btn.dataset.valor!;
       render();
     });
 

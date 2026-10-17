@@ -1,0 +1,150 @@
+---
+// Referencia visual de los cinco largos del calculador. La pidió Konny en la
+// reunión del 14-10-2026: muchas clientas dicen "tengo melena" y no es melena,
+// y el valor cambia por eso. La tabla de largos rige igual para todos los
+// tratamientos, así que es una sola guía para todos.
+//
+// Es un SVG en línea: cero descargas. Calculador.astro le pone el largo
+// elegido en data-largo y acá el cabello aparece hasta esa altura.
+//
+// Las alturas siguen lo que dice cada nombre (melena a los hombros, medio a
+// mitad de espalda, cintura, caderas y más abajo). Si Konny mide distinto
+// algún largo, se corrige en `niveles` y nada más.
+import { largos } from "../data/servicios";
+
+const niveles: Record<string, number> = {
+  Melena: 88,
+  Medio: 130,
+  Cintura: 174,
+  Caderas: 212,
+  "Extra largo": 250,
+};
+
+// Silueta del cabello visto de espalda, hasta la altura y.
+function cabello(y: number) {
+  const tope = "M 71 40 Q 71 13 90 13 Q 109 13 109 40 L 112 66";
+  if (y <= 92) {
+    return `${tope} Q 116 76 115 ${y} Q 90 ${y + 6} 65 ${y} Q 64 76 68 66 Z`;
+  }
+  return `${tope} Q 117 76 116 92 L 112 ${y} Q 90 ${y + 6} 68 ${y} L 64 92 Q 63 76 68 66 Z`;
+}
+
+// Sin largo elegido: cabello recogido hasta la nuca.
+const cabelloBase = "M 71 40 Q 71 13 90 13 Q 109 13 109 40 L 108 58 Q 90 64 72 58 Z";
+
+// Espalda: hombros, cintura, caderas y piernas, cada uno a la altura de su
+// línea para que la guía se lea sola.
+const cuerpo =
+  "M 83 52 L 83 64 C 70 68 58 70 56 80 C 54 100 60 140 66 174 C 60 190 56 204 57 212 C 60 240 64 260 66 276 L 88 276 L 90 236 L 92 276 L 114 276 C 116 260 120 240 123 212 C 124 204 120 190 114 174 C 120 140 126 100 124 80 C 122 70 110 68 97 64 L 97 52 Z";
+---
+
+<figure class="guia-largos" data-guia-largos>
+  <svg viewBox="0 0 240 280" role="img" aria-labelledby="guia-largos-titulo">
+    <title id="guia-largos-titulo">
+      Referencia de largos, vista de espalda: melena llega a los hombros, medio a mitad de la
+      espalda, cintura a la cintura, caderas a las caderas y extra largo más abajo.
+    </title>
+
+    <path class="guia-largos__cuerpo" d={cuerpo} />
+    <ellipse class="guia-largos__cuerpo" cx="90" cy="36" rx="17" ry="21" />
+
+    {/* Sin largo elegido: solo el cabello sobre la cabeza. */}
+    <path class="guia-largos__cabello guia-largos__cabello--base" d={cabelloBase} />
+    {
+      largos.map((l) => (
+        <path class="guia-largos__cabello" data-nivel={l} d={cabello(niveles[l])} />
+      ))
+    }
+
+    {
+      largos.map((l) => (
+        <g class="guia-largos__nivel" data-nivel={l}>
+          <line x1="36" x2="150" y1={niveles[l]} y2={niveles[l]} />
+          <text x="156" y={niveles[l] + 4}>
+            {l}
+          </text>
+        </g>
+      ))
+    }
+  </svg>
+  <figcaption class="texto-sm">
+    Fíjate hasta dónde llegan las puntas, mirando de espalda. Si quedas entre dos, elige el más
+    parecido: el valor final lo vemos en el salón.
+  </figcaption>
+</figure>
+
+<style>
+  .guia-largos {
+    margin: var(--space-3) auto 0;
+    max-width: 280px;
+    text-align: center;
+  }
+
+  .guia-largos svg {
+    width: 100%;
+    height: auto;
+  }
+
+  .guia-largos__cuerpo {
+    fill: color-mix(in srgb, var(--color-marron) 14%, transparent);
+    stroke: var(--color-marron);
+    stroke-width: 1.2;
+  }
+
+  .guia-largos__cabello {
+    fill: var(--color-caramelo);
+    stroke: var(--color-marron);
+    stroke-width: 1;
+    opacity: 0;
+    transition: opacity var(--dur-hover) var(--ease);
+  }
+
+  .guia-largos__cabello--base {
+    opacity: 1;
+  }
+
+  .guia-largos__nivel line {
+    stroke: var(--color-marron);
+    stroke-width: 1;
+    stroke-dasharray: 3 3;
+  }
+
+  .guia-largos__nivel text {
+    fill: var(--color-marron);
+    font-family: var(--fuente-cuerpo);
+    font-size: 13px;
+    font-weight: 400;
+  }
+
+  .guia-largos[data-largo="Melena"] [data-nivel="Melena"],
+  .guia-largos[data-largo="Medio"] [data-nivel="Medio"],
+  .guia-largos[data-largo="Cintura"] [data-nivel="Cintura"],
+  .guia-largos[data-largo="Caderas"] [data-nivel="Caderas"],
+  .guia-largos[data-largo="Extra largo"] [data-nivel="Extra largo"] {
+    opacity: 1;
+  }
+
+  .guia-largos[data-largo="Melena"] g[data-nivel="Melena"] line,
+  .guia-largos[data-largo="Medio"] g[data-nivel="Medio"] line,
+  .guia-largos[data-largo="Cintura"] g[data-nivel="Cintura"] line,
+  .guia-largos[data-largo="Caderas"] g[data-nivel="Caderas"] line,
+  .guia-largos[data-largo="Extra largo"] g[data-nivel="Extra largo"] line {
+    stroke: var(--color-terracota);
+    stroke-width: 2;
+    stroke-dasharray: none;
+  }
+
+  .guia-largos[data-largo="Melena"] g[data-nivel="Melena"] text,
+  .guia-largos[data-largo="Medio"] g[data-nivel="Medio"] text,
+  .guia-largos[data-largo="Cintura"] g[data-nivel="Cintura"] text,
+  .guia-largos[data-largo="Caderas"] g[data-nivel="Caderas"] text,
+  .guia-largos[data-largo="Extra largo"] g[data-nivel="Extra largo"] text {
+    fill: var(--color-terracota);
+    font-weight: 600;
+  }
+
+  figcaption {
+    margin-block-start: var(--space-1);
+    color: var(--color-marron);
+  }
+</style>

@@ -11,6 +11,32 @@ import Arco from "../components/Arco.astro";
 >
   <Seccion fondo="base">
     <h1 class="nosotras__titulo">Nosotras</h1>
+    {/* El salón real (material de Konny, 17-10-2026): la hilera de espejos y
+        el mesón desde el costado. Mismo local que el video de la portada. */}
+    <ul class="nosotras__espacio" aria-label={`Nuestro salón en ${terra.ciudad}`}>
+      <li>
+        <Arco ratio="3 / 4">
+          <img
+            src="/fotos/salon/espejos.webp"
+            alt="El salón de Terra Studio: espejos redondos con marco dorado, sillones negros y plantas colgantes"
+            width="900"
+            height="1200"
+            fetchpriority="high"
+          />
+        </Arco>
+      </li>
+      <li>
+        <Arco ratio="3 / 4">
+          <img
+            src="/fotos/salon/meson.webp"
+            alt="Mesón de mármol del salón con espejos iluminados y plantas, visto desde el costado"
+            width="900"
+            height="1200"
+            loading="lazy"
+          />
+        </Arco>
+      </li>
+    </ul>
   </Seccion>
 
   <Seccion fondo="impacto">
@@ -59,6 +85,22 @@ import Arco from "../components/Arco.astro";
   .nosotras__titulo,
   .nosotras__centrado {
     text-align: center;
+  }
+
+  .nosotras__espacio {
+    list-style: none;
+    margin: var(--space-4) auto 0;
+    padding: 0;
+    max-width: 760px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-2);
+  }
+
+  @media (min-width: 640px) {
+    .nosotras__espacio {
+      gap: var(--space-3);
+    }
   }
 
   .nosotras__equipo {

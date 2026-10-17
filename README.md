@@ -518,10 +518,9 @@ no un alisado:
 | Corte bordado profundo | `public/fotos/servicios/corte-bordado.webp` | `cortes/3.2` |
 | Cortes | `public/fotos/servicios/cortes.webp` | `cortes/1.2` |
 
-Botox capilar conserva la foto del primer lote: es el único tratamiento con
-tarjeta pero sin material propio, y esa imagen sí muestra lo que deja el
-tratamiento. Ahora es la única de esa clienta, así que las cuatro tarjetas
-muestran cuatro personas distintas.
+Botox capilar conservó la foto del primer lote hasta el 17-10-2026, cuando se
+cambió por una que Konny clasificó como botox (ver "Cambios pedidos en la
+reunión del 14-10-2026" más abajo).
 
 Las **10 fotos de colorimetría** ya tienen destino: ver la sección siguiente.
 
@@ -557,6 +556,10 @@ micro-animaciones de marca. La regla que gobierna todo esto: **nada de lo que
 se agregó puede retrasar la primera pintura ni encarecer el hosting.**
 
 ### El video del hero
+
+> Desde el 17-10-2026 el video es otro (el salón, no el clip de manos): ver
+> "Cambios pedidos en la reunión del 14-10-2026". Lo de abajo sobre cómo carga
+> sigue igual.
 
 `public/video/hero.mp4` · **620 KB** · 540×960 · 8 s · sin audio.
 
@@ -606,12 +609,58 @@ normal. Ahora el observador también revela cuando la sección quedó por encima
 del viewport, y hay una red de seguridad en `scroll` y `pageshow` para los
 saltos por ancla o por restauración de scroll.
 
+## Cambios pedidos en la reunión del 14-10-2026 (17-10-2026)
+
+### Hero: el salón en movimiento
+
+Konny pidió cambiar el clip de manos por el salón completo. Ahora
+`public/video/hero.mp4` es un paneo por el local (`IMG_1306.MOV` del zip que
+mandó, tramo de 7,2 a 13,6 s): **556 KB** · 540×960 · 20 fps · 12,8 s. Ese
+tramo va hacia adelante y de vuelta (palíndromo), así el loop no tiene corte.
+El fotograma inicial, `fotos/hero-poster.webp`, pesa 80 KB.
+
+El velo cambió: antes tapaba el 92-98 % de la imagen, lo que con el salón (más
+luminoso que el clip anterior) dejaba la foto casi invisible. Ahora es denso
+solo detrás del texto y cae casi a cero hacia los bordes. La forma depende del
+ancho: en el teléfono el texto ocupa todo el ancho y la elipse es ancha y baja
+(90 %×40 %); desde 768 px el texto es una columna angosta y la elipse se cierra
+(52 %×46 %). Medido sobre el fotograma real con la fórmula WCAG: el claim queda
+en 3,7:1 o más en 375, 768 y 1280 px (texto grande, el mínimo AA es 3:1).
+**Si se cambia el video, hay que volver a medir.**
+
+### Calculador: estructura capilar y guía de largos
+
+- **Pregunta nueva, "¿Cómo es tu cabello?"** (liso, ondulado, rizado, afro),
+  después del largo, en los cinco servicios que van por largo. Cortes no la
+  lleva. El resultado no aparece hasta que se responde, y el mensaje de
+  WhatsApp la incluye ("Mi cabello es afro.").
+- Los recargos viven en un solo lugar: `estructuras` en `src/data/servicios.js`.
+  `recargo: 0` no cambia el valor; un número se suma; `null` significa "sube,
+  pero no hay cifra": el valor se muestra como "desde $…" con un aviso de que
+  se confirma por WhatsApp.
+- **Afro suma $30.000** (la cifra que dio Konny como ejemplo en la reunión) y
+  **rizado está en `null`** porque dijo que siempre cuesta distinto, sin dar
+  cifra. Las dos quedan por confirmar con ella.
+- **Guía de largos** (`src/components/GuiaLargos.astro`): una silueta de
+  espalda con las cinco alturas; al elegir un largo, el cabello aparece hasta
+  esa línea. Konny explicó que la tabla de largos rige igual para todos los
+  tratamientos, así que es una sola guía. Es un SVG en línea, cero descargas.
+  Las alturas siguen lo que dice cada nombre; si ella mide distinto algún
+  largo, se corrige en `niveles` dentro del componente.
+
+### Fotos
+
+- **Botox capilar** ya tiene foto propia en la tarjeta de la portada y en su
+  landing: `IMG_3209` de la carpeta BOTOX del Drive, clasificada por Konny.
+- **Nosotras** abre con dos fotos del salón (`fotos/salon/espejos.webp` y
+  `meson.webp`, de `IMG_1308` e `IMG_1307`).
+
 ## Pendientes (marcadores, no contenido inventado)
 
-1. Fotografía que falta pedir: los seis retratos del equipo, una foto del local
-   propiamente tal (fachada o interior amplio), y material de **Botox capilar**,
-   **Reconstrucción SOS** y **Masaje capilar** — los tres únicos tratamientos sin
+1. Fotografía que falta pedir: los seis retratos del equipo y material de
+   **Reconstrucción SOS** y **Masaje capilar** — los dos únicos tratamientos sin
    una sola foto propia, que por eso mantienen el arco de color en su landing.
+   (El local y el botox llegaron el 17-10-2026.)
 2. ~~Antes/después autorizados~~ — resuelto el 27-09-2026 con el material de Drive.
 3. Reseñas con nombre y autorización
 4. ~~¿Se ofrece colorimetría?~~ — resuelto el 28-09-2026: sí, y la landing ya está
@@ -638,6 +687,9 @@ saltos por ancla o por restauración de scroll.
     (`src/data/duraciones.js`, solo Alisado tiene una hoy), y las
     credenciales de la cuenta de servicio de Google en Netlify — paso a
     paso en "Cómo mantener el sitio" más arriba.
+12. Confirmar con Konny los recargos por estructura capilar: afro $30.000 (lo
+    dio como ejemplo) y rizado (sin cifra todavía). Se cambian en
+    `estructuras`, en `src/data/servicios.js`.
 
 ## Fases
 

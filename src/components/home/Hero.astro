@@ -8,15 +8,16 @@ const whatsappUrl = urlWhatsApp(terra.whatsapp);
 
 <section class="hero">
   <!--
-    Material real del salón. Encima va el velo de la paleta: sin él, el texto
-    crema no pasa contraste. El velo es más denso en el centro, donde cae el
-    claim.
+    El salón de Terra: un paneo lento por el local (IMG_1306, tramo de 6 s
+    hacia adelante y de vuelta, así el loop no tiene corte). Encima va el velo
+    de la paleta, concentrado detrás del texto para que el resto del salón se
+    vea.
 
     El fotograma va primero y el video encima, con preload="none". Así la
-    primera pintura es una imagen de 100 KB y el LCP no depende del video: si
+    primera pintura es una imagen de 80 KB y el LCP no depende del video: si
     el video nunca llega a cargar —conexión lenta, ahorro de datos, o el
     visitante pidió menos movimiento— la portada se ve exactamente igual,
-    solo quieta. El video pesa 620 KB y es puro agregado.
+    solo quieta. El video pesa 560 KB y es puro agregado.
   -->
   <div class="hero__fondo" aria-hidden="true">
     <img
@@ -102,20 +103,37 @@ const whatsappUrl = urlWhatsApp(terra.whatsapp);
     }
   }
 
-  /* La foto del salón es muy luminosa (pared blanca, cabello claro), así que
-     el velo tiene que ser denso o el claim en crema no pasa contraste. Medido:
-     con estos valores el texto queda sobre un fondo efectivo oscuro en toda
-     la zona del contenido. */
+  /* El velo se concentra solo donde va el texto: denso hasta el 62 % de la
+     elipse y desde ahí cae casi a cero, para que el salón se vea en los
+     bordes. La forma cambia con la pantalla porque el bloque de texto también:
+     en el teléfono ocupa todo el ancho, así que la elipse es ancha y baja; en
+     tablet y escritorio el texto es una columna angosta y la elipse se cierra.
+     Medido sobre el fotograma real: el claim queda sobre 3,7:1 o más en 375,
+     768 y 1280 px (texto grande, el mínimo AA es 3:1). Si se cambia el video,
+     hay que volver a medir. */
   .hero__fondo::after {
     content: "";
     position: absolute;
     inset: 0;
     background: radial-gradient(
-        100% 70% at 50% 48%,
-        color-mix(in srgb, var(--color-marron) 94%, transparent),
-        color-mix(in srgb, var(--color-marron) 78%, transparent) 65%
+        90% 40% at 50% 48%,
+        color-mix(in srgb, var(--color-marron) 86%, transparent),
+        color-mix(in srgb, var(--color-marron) 86%, transparent) 62%,
+        color-mix(in srgb, var(--color-marron) 10%, transparent)
       ),
-      color-mix(in srgb, var(--color-marron) 62%, transparent);
+      color-mix(in srgb, var(--color-marron) 20%, transparent);
+  }
+
+  @media (min-width: 768px) {
+    .hero__fondo::after {
+      background: radial-gradient(
+          52% 46% at 50% 48%,
+          color-mix(in srgb, var(--color-marron) 86%, transparent),
+          color-mix(in srgb, var(--color-marron) 86%, transparent) 62%,
+          color-mix(in srgb, var(--color-marron) 10%, transparent)
+        ),
+        color-mix(in srgb, var(--color-marron) 20%, transparent);
+    }
   }
 
   .hero__contenido {
