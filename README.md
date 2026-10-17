@@ -655,6 +655,28 @@ en 3,7:1 o más en 375, 768 y 1280 px (texto grande, el mínimo AA es 3:1).
 - **Nosotras** abre con dos fotos del salón (`fotos/salon/espejos.webp` y
   `meson.webp`, de `IMG_1308` e `IMG_1307`).
 
+### Nosotras: historia y equipo (17-10-2026)
+
+Se revisó completo el Drive de Terra (16 carpetas, guiones, catálogo,
+historias destacadas, brandboard) buscando datos del equipo. **No hay nombres,
+especialidades ni retratos de las estilistas**: el propio guion «Video 6 — El
+equipo» de ZEEN (1-10-2026) dice que todavía faltan. Así que la página se armó
+solo con lo verificado y quedó lista para recibir al resto:
+
+- **Fotos del local** arriba: recepción (`IMG_9969`), espejos y mesón.
+- **Nuestra historia:** antes era un marcador «⬜ Pendiente» visible en el sitio.
+  Ahora cuenta lo confirmado: empezó como Alisados Konny, hoy son seis, los
+  servicios, el registro ISP/ANVISA de las líneas de alisado y la garantía.
+  Debajo, la dirección, el equipo y la garantía en tres datos.
+- **El equipo** sale de `src/data/equipo.js` (lista pública; no confundir con
+  `estilistas.js`, que es interna para Disponibilidad). Hoy tiene a Konny, con
+  una foto sacada de su video de septiembre (`GRABACIONES/Septiembre`,
+  `IMG_4049`). Mientras falten personas aparece «Muy pronto vas a conocer al
+  resto del equipo»; el aviso se va solo cuando la lista llega a
+  `terra.estilistas`.
+- Lo que falta se le pidió a Konny en «Lo que nos falta para la web - Terra
+  Studio.pdf» (carpeta `WEB TERRA`), sin urgencia.
+
 ## Pendientes (marcadores, no contenido inventado)
 
 1. Fotografía que falta pedir: los seis retratos del equipo y material de
@@ -675,8 +697,9 @@ en 3,7:1 o más en 375, 768 y 1280 px (texto grande, el mínimo AA es 3:1).
    confirmarse si el sitio se queda solo en capilar o si estos entran
    también — no bloqueó nada hasta ahora, pero sí bloquearía diseñar el menú
    de Nosotras/servicios si se agregan más adelante.
-9. La historia de Terra Studio (Nosotras) y los datos de las 6 estilistas
-   (nombre, foto, especialidad)
+9. Nombre, especialidad y retrato de las otras 5 estilistas (se agregan en
+   `src/data/equipo.js`), y la versión de Konny de la historia del estudio
+   (hoy hay una corta con datos verificados)
 10. ~~Dominio real del sitio~~ — resuelto en la Fase 10:
     `https://terrastudiosalon.netlify.app`. Si más adelante compran un
     dominio propio, actualizar `astro.config.mjs` (ver "Cómo mantener el

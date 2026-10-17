@@ -1,24 +1,39 @@
 ---
 import { terra } from "../data/negocio";
+import { equipo } from "../data/equipo";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Seccion from "../components/Seccion.astro";
 import Arco from "../components/Arco.astro";
+
+// Todo el texto de esta página sale de material verificado, no de supuestos:
+// la filosofía es la del catálogo de tratamientos de Konny; la historia junta
+// lo que está confirmado (la marca anterior era Alisados Konny, hoy son seis
+// estilistas, los servicios, la dirección, el registro de las líneas de
+// alisado y la garantía). Si Konny manda su propia versión de la historia,
+// reemplaza a la de acá.
+const faltan = terra.estilistas - equipo.length;
+// En el texto corrido el número va en palabras ("somos seis", no "somos 6").
+const palabras = ["cero", "una", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve", "diez"];
+const cuantas = palabras[terra.estilistas] ?? String(terra.estilistas);
 ---
 
 <BaseLayout
   title="Nosotras — Terra Studio"
-  description="Quiénes somos en Terra Studio: nuestra filosofía de diagnóstico antes de cada tratamiento, y el equipo detrás."
+  description="Quiénes somos en Terra Studio, Temuco: de Alisados Konny a un estudio integral con seis estilistas. Nuestra filosofía, nuestra historia y el equipo."
 >
   <Seccion fondo="base">
     <h1 class="nosotras__titulo">Nosotras</h1>
-    {/* El salón real (material de Konny, 17-10-2026): la hilera de espejos y
-        el mesón desde el costado. Mismo local que el video de la portada. */}
+    <p class="nosotras__bajada nosotras__centrado">
+      Un estudio capilar integral en el centro de {terra.ciudad}.
+    </p>
+    {/* El salón real (material de Konny): la recepción, la hilera de espejos y
+        el mesón visto desde el costado. Mismo local que el video de la portada. */}
     <ul class="nosotras__espacio" aria-label={`Nuestro salón en ${terra.ciudad}`}>
       <li>
-        <Arco ratio="3 / 4">
+        <Arco class="nosotras__foto">
           <img
-            src="/fotos/salon/espejos.webp"
-            alt="El salón de Terra Studio: espejos redondos con marco dorado, sillones negros y plantas colgantes"
+            src="/fotos/salon/recepcion.webp"
+            alt="Recepción de Terra Studio con lámpara dorada, mesas de centro y la hilera de espejos al fondo"
             width="900"
             height="1200"
             fetchpriority="high"
@@ -26,7 +41,18 @@ import Arco from "../components/Arco.astro";
         </Arco>
       </li>
       <li>
-        <Arco ratio="3 / 4">
+        <Arco class="nosotras__foto">
+          <img
+            src="/fotos/salon/espejos.webp"
+            alt="El salón de Terra Studio: espejos redondos con marco dorado, sillones negros y plantas colgantes"
+            width="900"
+            height="1200"
+            loading="lazy"
+          />
+        </Arco>
+      </li>
+      <li>
+        <Arco class="nosotras__foto">
           <img
             src="/fotos/salon/meson.webp"
             alt="Mesón de mármol del salón con espejos iluminados y plantas, visto desde el costado"
@@ -58,26 +84,71 @@ import Arco from "../components/Arco.astro";
   </Seccion>
 
   <Seccion fondo="base">
-    <h2 class="nosotras__titulo">Nuestra historia</h2>
-    <p class="prosa nosotras__centrado">⬜ Pendiente: la historia de Terra Studio.</p>
+    <div class="nosotras__historia">
+      <h2>Nuestra historia</h2>
+      <div class="prosa nosotras__historia-texto">
+        <p>
+          Terra Studio empezó como <strong>Alisados Konny</strong>, el estudio de alisados que
+          fundó Konny en {terra.ciudad}.
+        </p>
+        <p>
+          Con el tiempo se sumaron más estilistas y más servicios. Hoy somos {cuantas},
+          y además de alisados hacemos botox capilar, reconstrucción, masajes, color y cortes,
+          ahora bajo el nombre de Terra Studio.
+        </p>
+        <p>
+          Lo que no cambió es la forma de trabajar: cada tratamiento parte con un diagnóstico,
+          nuestras líneas de alisado tienen registro ISP y ANVISA, y todos los tratamientos
+          tienen garantía de {terra.garantia}.
+        </p>
+      </div>
+    </div>
+
+    <dl class="nosotras__datos">
+      <div>
+        <dt class="texto-sm">Dónde estamos</dt>
+        <dd>
+          {terra.direccion.calle}, {terra.direccion.detalle}
+          <span class="texto-sm">{terra.direccion.referencia}</span>
+        </dd>
+      </div>
+      <div>
+        <dt class="texto-sm">Equipo</dt>
+        <dd>{terra.estilistas} estilistas especializadas</dd>
+      </div>
+      <div>
+        <dt class="texto-sm">Garantía</dt>
+        <dd>{terra.garantia} en todos los tratamientos</dd>
+      </div>
+    </dl>
   </Seccion>
 
   <Seccion fondo="oscuro">
     <h2 class="nosotras__titulo">El equipo</h2>
     <p class="prosa nosotras__centrado">
-      Somos {terra.estilistas} estilistas especializadas, cada una con su
-      propia especialidad.
+      Somos {cuantas} estilistas especializadas, cada una con su propia especialidad.
     </p>
     <ul class="nosotras__equipo">
       {
-        new Array(terra.estilistas).fill(null).map(() => (
-          <li>
-            <Arco ratio="1 / 1" fondo="base" />
+        equipo.map((persona) => (
+          <li class="persona" data-reveal-item>
+            <Arco ratio="1 / 1" fondo={persona.foto ? undefined : "base"} class="persona__foto">
+              {persona.foto && (
+                <img src={persona.foto} alt={persona.alt} width="800" height="800" loading="lazy" />
+              )}
+            </Arco>
+            <h3 class="persona__nombre">{persona.nombre}</h3>
+            <p class="texto-sm persona__rol">{persona.rol}</p>
+            {persona.especialidad && <p class="texto-sm">{persona.especialidad}</p>}
           </li>
         ))
       }
     </ul>
-    <p class="texto-sm nosotras__centrado">⬜ Pendiente: nombre, foto y especialidad de cada una.</p>
+    {
+      faltan > 0 && (
+        <p class="texto-sm nosotras__centrado">Muy pronto vas a conocer al resto del equipo.</p>
+      )
+    }
   </Seccion>
 </BaseLayout>
 
@@ -87,20 +158,92 @@ import Arco from "../components/Arco.astro";
     text-align: center;
   }
 
+  .nosotras__bajada {
+    margin-block-start: var(--space-2);
+  }
+
+  /* Tres fotos en fila desde 640 px. En el teléfono la recepción va arriba a
+     todo el ancho y las otras dos debajo, para que ninguna quede diminuta. */
   .nosotras__espacio {
     list-style: none;
     margin: var(--space-4) auto 0;
     padding: 0;
-    max-width: 760px;
+    max-width: 960px;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-2);
   }
 
+  .nosotras__espacio li:first-child {
+    grid-column: 1 / -1;
+  }
+
+  /* El arco es un componente hijo: su clase solo se alcanza con :global(). */
+  .nosotras__espacio :global(.nosotras__foto) {
+    aspect-ratio: 3 / 4;
+  }
+
+  .nosotras__espacio li:first-child :global(.nosotras__foto) {
+    aspect-ratio: 1 / 1;
+  }
+
   @media (min-width: 640px) {
     .nosotras__espacio {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: var(--space-3);
     }
+
+    .nosotras__espacio li:first-child {
+      grid-column: auto;
+    }
+
+    .nosotras__espacio li:first-child :global(.nosotras__foto) {
+      aspect-ratio: 3 / 4;
+    }
+  }
+
+  .nosotras__historia {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .nosotras__historia-texto {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  @media (min-width: 900px) {
+    .nosotras__historia {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+      align-items: start;
+    }
+  }
+
+  .nosotras__datos {
+    margin: var(--space-5) 0 0;
+    padding-block-start: var(--space-4);
+    border-top: 1px solid color-mix(in srgb, var(--color-marron) 25%, transparent);
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  @media (min-width: 640px) {
+    .nosotras__datos {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .nosotras__datos dt {
+    font-weight: 600;
+    margin-block-end: 0.25em;
+  }
+
+  .nosotras__datos dd {
+    margin: 0;
+  }
+
+  .nosotras__datos dd span {
+    display: block;
   }
 
   .nosotras__equipo {
@@ -108,13 +251,21 @@ import Arco from "../components/Arco.astro";
     margin: var(--space-4) 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-3);
+    grid-template-columns: repeat(auto-fit, minmax(150px, 220px));
+    justify-content: center;
+    gap: var(--space-4) var(--space-3);
   }
 
-  @media (min-width: 640px) {
-    .nosotras__equipo {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
+  .persona {
+    text-align: center;
+  }
+
+  .persona__nombre {
+    margin-block-start: var(--space-2);
+  }
+
+  .persona__rol {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
   }
 </style>
