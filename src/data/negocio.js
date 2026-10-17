@@ -13,7 +13,7 @@ export const terra = {
     codigoPostal: "4801011",
   },
   whatsapp: "56968183234",
-  instagram: "@terrastudio",
+  instagram: "@terra.studio.cl",
   horario: {
     lunes: "09:00 - 19:00",
     martes: "09:00 - 19:00",
