@@ -689,6 +689,16 @@ solo con lo verificado y quedó lista para recibir al resto:
 - Lo que falta se le pidió a Konny en «Lo que nos falta para la web - Terra
   Studio.pdf» (carpeta `WEB TERRA`), sin urgencia.
 
+## Políticas de la empresa (2-11-2026)
+
+Página `/politicas` (`src/pages/politicas.astro`), enlazada desde el pie de
+página en todas las páginas (franja «© Terra Studio · Políticas de la empresa»).
+El texto es el que entregó Terra, **tal cual**: es un documento con efecto para
+las clientas, así que no se resume ni se reescribe; solo van en negrita las
+cifras y plazos (abono de $20.000, 48 horas, 15 minutos). Lleva índice con saltos
+a cada punto y la fecha de última actualización arriba. Si Terra cambia algo, se
+edita el arreglo `politicas` y la fecha `actualizacion` en ese archivo.
+
 ## Pendientes (marcadores, no contenido inventado)
 
 1. Fotografía que falta pedir: los seis retratos del equipo y material de

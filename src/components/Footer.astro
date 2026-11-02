@@ -16,6 +16,7 @@ const dias: [string, string | null][] = [
 
 const whatsappUrl = urlWhatsApp(terra.whatsapp);
 const instagramUrl = `https://instagram.com/${terra.instagram.replace("@", "")}`;
+const anio = new Date().getFullYear();
 ---
 
 <Seccion as="footer" fondo="oscuro">
@@ -72,6 +73,11 @@ const instagramUrl = `https://instagram.com/${terra.instagram.replace("@", "")}`
       </ul>
     </div>
   </div>
+
+  <div class="pie__legal texto-sm">
+    <span>© {anio} {terra.nombre}</span>
+    <a href="/politicas">Políticas de la empresa</a>
+  </div>
 </Seccion>
 
 <style>
@@ -115,6 +121,21 @@ const instagramUrl = `https://instagram.com/${terra.instagram.replace("@", "")}`
     justify-content: space-between;
     gap: var(--space-2);
     max-width: 220px;
+  }
+
+  .pie__legal {
+    margin-block-start: var(--space-5);
+    padding-block-start: var(--space-3);
+    border-top: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-1) var(--space-3);
+  }
+
+  .pie__legal a {
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
 
   @media (min-width: 768px) {

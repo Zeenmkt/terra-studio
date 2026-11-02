@@ -1,0 +1,235 @@
+---
+import { terra } from "../data/negocio";
+import { urlWhatsApp } from "../lib/whatsapp";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Seccion from "../components/Seccion.astro";
+import Boton from "../components/Boton.astro";
+
+// Texto entregado por Terra Studio (lámina «Políticas de la empresa», 2-11-2026).
+// Va tal cual: es un documento con efecto para las clientas, así que no se
+// resume ni se reescribe. Solo se marcan en negrita las cifras y plazos para
+// que se encuentren rápido. Si Terra cambia algo, se edita acá.
+const actualizacion = "noviembre de 2026";
+
+const politicas = [
+  {
+    id: "diagnostico",
+    titulo: "Diagnóstico y asesoría profesional",
+    parrafos: [
+      "Cada servicio se realiza considerando el diagnóstico capilar, los antecedentes del cabello y el objetivo acordado con la clienta. Nos reservamos la posibilidad de no realizar procedimientos que puedan comprometer la salud del cabello.",
+    ],
+  },
+  {
+    id: "resultados",
+    titulo: "Información y resultados esperados",
+    parrafos: [
+      "Antes de comenzar, se informará el procedimiento, su valor y los resultados posibles. Estos dependerán de las condiciones del cabello y de su historial de tratamientos. Las fotografías de referencia sirven como orientación y no garantizan un resultado idéntico.",
+    ],
+  },
+  {
+    id: "devoluciones",
+    titulo: "Política de devoluciones y evaluación de disconformidades",
+    parrafos: [
+      "Terra Studio no realiza devoluciones de dinero por cambios de opinión o de preferencias respecto de un servicio correctamente realizado conforme a lo acordado.",
+      "Ante una disconformidad, se solicitará una <strong>evaluación presencial y gratuita</strong> en el salón para verificar lo ocurrido y ofrecer una solución. Si se confirma un error atribuible a nuestro trabajo, se ofrecerá su <strong>corrección sin costo</strong>, sin que la clienta esté obligada a aceptarla.",
+      "Si la clienta no puede o no desea asistir, o no acepta la corrección ofrecida, Terra Studio revisará los antecedentes disponibles y podrá proponer una devolución parcial del servicio, cuyo porcentaje deberá acordarse con la clienta.",
+      "Este procedimiento no limita los derechos de las consumidoras ni las devoluciones o compensaciones que legalmente correspondan.",
+    ],
+  },
+  {
+    id: "reservas",
+    titulo: "Reservas, cambios y puntualidad",
+    parrafos: [
+      "La reserva requiere un <strong>abono de $20.000</strong>, descontable del valor total del servicio.",
+      "Antes de agendar y pagar el abono, se informa que todos los servicios están sujetos a diagnóstico presencial y que no todos los cabellos califican para el procedimiento solicitado.",
+      "Si el diagnóstico determina que no es recomendable realizar el servicio solicitado, se explicarán los motivos y se propondrán alternativas adecuadas para el cabello. Si la clienta decide no realizarse ninguna de las alternativas ofrecidas, el abono no será reembolsable, siempre que esta condición haya sido informada y aceptada previamente, y sin perjuicio de los derechos que legalmente correspondan. El abono permite reservar un espacio de agenda y tiempo profesional exclusivo para su atención.",
+      "El abono tampoco será reembolsable por cancelación o inasistencia, sin perjuicio de los derechos que legalmente correspondan.",
+      "Se permite <strong>un solo cambio de fecha y/u horario</strong> conservando el abono, siempre que se solicite con al menos <strong>48 horas de anticipación</strong> y exista disponibilidad.",
+      "A partir del segundo cambio, será necesario realizar un nuevo abono de $20.000 para reservar la atención. El abono anterior no será reembolsado ni se descontará del servicio, sin perjuicio de los derechos que legalmente correspondan.",
+      "Un atraso de <strong>15 minutos o más</strong> implica la cancelación automática de la atención y la pérdida del abono.",
+      "Si el salón cancela la atención, la clienta podrá elegir entre reagendar o recibir la devolución íntegra de su abono.",
+    ],
+  },
+  {
+    id: "cuidados",
+    titulo: "Cuidados posteriores",
+    parrafos: [
+      "Se entregarán recomendaciones para el mantenimiento del servicio. La duración y evolución del resultado pueden verse afectadas por la rutina de cuidado, los productos utilizados y los procedimientos posteriores.",
+    ],
+  },
+  {
+    id: "buen-trato",
+    titulo: "Respeto y buen trato",
+    parrafos: [
+      "Promovemos un ambiente cordial y respetuoso para nuestras clientas y equipo. No se aceptarán insultos, amenazas, agresiones ni conductas que afecten la seguridad o dignidad de las personas.",
+    ],
+  },
+  {
+    id: "reclamos",
+    titulo: "Atención de consultas y reclamos",
+    parrafos: [
+      "Toda consulta o reclamo será atendido con respeto y seriedad a través de nuestros canales oficiales, buscando una solución responsable y acorde con cada situación.",
+    ],
+  },
+];
+
+const whatsappUrl = urlWhatsApp(terra.whatsapp, "Hola! Tengo una consulta sobre las políticas de Terra Studio.");
+---
+
+<BaseLayout
+  title="Políticas de la empresa — Terra Studio"
+  description="Políticas de Terra Studio en Temuco: diagnóstico, resultados, devoluciones, reservas con abono, cambios de hora, puntualidad, cuidados posteriores y reclamos."
+>
+  <Seccion fondo="base">
+    <div class="politicas__cabecera">
+      <h1>Políticas de la empresa</h1>
+      <p class="prosa">
+        En Terra Studio trabajamos con dedicación, responsabilidad y atención personalizada.
+        Estas políticas establecen las condiciones de nuestros servicios y el compromiso con
+        nuestras clientas.
+      </p>
+      <p class="texto-sm politicas__fecha">Última actualización: {actualizacion}</p>
+    </div>
+
+    <nav class="politicas__indice" aria-label="Índice de políticas">
+      <ol>
+        {
+          politicas.map((p) => (
+            <li>
+              <a href={`#${p.id}`}>{p.titulo}</a>
+            </li>
+          ))
+        }
+      </ol>
+    </nav>
+  </Seccion>
+
+  <Seccion fondo="base">
+    <ol class="politicas__lista">
+      {
+        politicas.map((p, i) => (
+          <li class="politica" id={p.id}>
+            <h2 class="politica__titulo">
+              <span class="politica__numero" aria-hidden="true">
+                {i + 1}
+              </span>
+              {p.titulo}
+            </h2>
+            <div class="politica__texto">
+              {p.parrafos.map((parrafo) => (
+                <p set:html={parrafo} />
+              ))}
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </Seccion>
+
+  <Seccion fondo="oscuro">
+    <div class="politicas__cierre">
+      <h2>¿Tienes alguna duda?</h2>
+      <p class="prosa">Escríbenos antes de agendar y te explicamos lo que necesites.</p>
+      <Boton variante="primario" href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+        Escribir por WhatsApp
+      </Boton>
+    </div>
+  </Seccion>
+</BaseLayout>
+
+<style>
+  .politicas__cabecera {
+    display: grid;
+    gap: var(--space-2);
+    justify-items: center;
+    text-align: center;
+  }
+
+  .politicas__fecha {
+    opacity: 0.85;
+  }
+
+  .politicas__indice {
+    max-width: var(--prose-max);
+    margin: var(--space-5) auto 0;
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid color-mix(in srgb, var(--color-marron) 25%, transparent);
+    border-radius: 16px;
+  }
+
+  .politicas__indice ol {
+    margin: 0;
+    padding-inline-start: 1.25em;
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .politicas__indice a {
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+    text-underline-offset: 3px;
+  }
+
+  .politicas__indice a:hover {
+    text-decoration-color: currentColor;
+  }
+
+  .politicas__lista {
+    list-style: none;
+    margin: 0 auto;
+    padding: 0;
+    max-width: var(--prose-max);
+    display: grid;
+  }
+
+  .politica {
+    padding-block: var(--space-4);
+    border-top: 1px solid color-mix(in srgb, var(--color-marron) 20%, transparent);
+    /* El encabezado fijo tapaba el título al saltar desde el índice. */
+    scroll-margin-top: 6rem;
+  }
+
+  .politica:first-child {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .politica__titulo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-h3);
+    margin-block-end: var(--space-2);
+  }
+
+  .politica__numero {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: var(--bg-impacto);
+    color: var(--fg-impacto);
+    font-family: var(--fuente-cuerpo);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    letter-spacing: 0;
+  }
+
+  .politica__texto {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .politica__texto :global(strong) {
+    font-weight: 600;
+  }
+
+  .politicas__cierre {
+    display: grid;
+    gap: var(--space-2);
+    justify-items: center;
+    text-align: center;
+  }
+</style>
